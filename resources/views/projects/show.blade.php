@@ -17,6 +17,12 @@
 
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+            @if(session('success'))
+                <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
+                    <span class="block sm:inline">{{ session('success') }}</span>
+                </div>
+            @endif
+
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 mb-6">
                 <h3 class="text-lg font-bold mb-2">Descrição do Projeto</h3>
                 <p class="text-gray-700">{{ $project->description ?: 'Sem descrição.' }}</p>
@@ -25,25 +31,16 @@
 
             <h3 class="text-xl font-bold mb-4">Tarefas</h3>
             
-            <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <table class="min-w-full divide-y divide-gray-200">
-                    <thead class="bg-gray-50">
-                        <tr>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Título</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Prioridade</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Responsável</th>
-                            <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
-                        </tr>
-                    </thead>
-                    <tbody class="bg-white divide-y divide-gray-200">
-                        @forelse($project->tasks as $task)
-                            <tr>
-                                <td class="px-6 py-4 whitespace-nowrap">
-                                    <div class="text-sm font-medium text-gray-900">{{ $task->title }}</div>
-                                    <div class="text-sm text-gray-500">{{ Str::limit($task->description, 50) }}</div>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+            <div class="space-y-6">
+                @forelse($project->tasks as $task)
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg border border-gray-200">
+                        <div class="p-6 border-b border-gray-200">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <h4 class="text-lg font-bold text-gray-900">{{ $task->title }}</h4>
+                                    <p class="text-gray-600 mt-1">{{ $task->description }}</p>
+                                </div>
+                                <div class="flex items-center space-x-4">
                                     @php
                                         $priorityColors = [
                                             'low' => 'bg-blue-100 text-blue-800',
@@ -54,8 +51,7 @@
                                     <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full {{ $priorityColors[$task->priority] }}">
                                         {{ ucfirst($task->priority) }}
                                     </span>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap">
+                                    
                                     <form action="{{ route('tasks.updateStatus', $task) }}" method="POST">
                                         @csrf
                                         @method('PATCH')
@@ -66,28 +62,61 @@
                                             <option value="completed" {{ $task->status == 'completed' ? 'selected' : '' }}>Concluído</option>
                                         </select>
                                     </form>
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                    {{ $task->assignee ? $task->assignee->name : 'Não atribuído' }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                    <a href="{{ route('tasks.edit', $task) }}" class="text-indigo-600 hover:text-indigo-900 mr-3">Editar</a>
+                                </div>
+                            </div>
+                            
+                            <div class="mt-4 flex justify-between items-center text-sm text-gray-500">
+                                <div>Responsável: <span class="font-medium text-gray-900">{{ $task->assignee ? $task->assignee->name : 'Não atribuído' }}</span></div>
+                                <div class="flex space-x-3">
+                                    <a href="{{ route('tasks.edit', $task) }}" class="text-indigo-600 hover:text-indigo-900">Editar</a>
                                     <form action="{{ route('tasks.destroy', $task) }}" method="POST" class="inline">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit" class="text-red-600 hover:text-red-900" onclick="return confirm('Tem certeza?')">Excluir</button>
                                     </form>
-                                </td>
-                            </tr>
-                        @empty
-                            <tr>
-                                <td colspan="5" class="px-6 py-10 text-center text-gray-500">
-                                    Nenhuma tarefa cadastrada para este projeto.
-                                </td>
-                            </tr>
-                        @endforelse
-                    </tbody>
-                </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Comments Section -->
+                        <div class="bg-gray-50 p-6">
+                            <h5 class="text-sm font-bold text-gray-700 mb-4">Comentários ({{ $task->comments->count() }})</h5>
+                            
+                            <div class="space-y-4 mb-4">
+                                @foreach($task->comments as $comment)
+                                    <div class="bg-white p-3 rounded shadow-sm border border-gray-100">
+                                        <div class="flex justify-between items-start">
+                                            <span class="text-xs font-bold text-gray-900">{{ $comment->user->name }}</span>
+                                            <span class="text-xs text-gray-500">{{ $comment->created_at->diffForHumans() }}</span>
+                                        </div>
+                                        <p class="text-sm text-gray-700 mt-1">{{ $comment->content }}</p>
+                                        @if($comment->user_id === Auth::id())
+                                            <form action="{{ route('comments.destroy', $comment) }}" method="POST" class="mt-2">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="submit" class="text-xs text-red-500 hover:text-red-700">Excluir</button>
+                                            </form>
+                                        @endif
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            <form action="{{ route('comments.store', $task) }}" method="POST">
+                                @csrf
+                                <div class="flex space-x-2">
+                                    <input type="text" name="content" placeholder="Adicionar um comentário técnico..." class="flex-1 text-sm rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500" required>
+                                    <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white text-sm font-bold py-2 px-4 rounded">
+                                        Enviar
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                @empty
+                    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-12 text-center border border-gray-200">
+                        <p class="text-gray-500 text-lg">Nenhuma tarefa cadastrada para este projeto.</p>
+                    </div>
+                @endforelse
             </div>
         </div>
     </div>
