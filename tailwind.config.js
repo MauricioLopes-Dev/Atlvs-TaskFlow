@@ -14,6 +14,12 @@ export default {
             fontFamily: {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
+            colors: {
+                'atlvs-primary': '#1a1a1a', // Preto elegante
+                'atlvs-secondary': '#333333', // Cinza escuro
+                'atlvs-accent': '#007bff', // Azul da logo (ajustável conforme a logo real)
+                'atlvs-gold': '#d4af37', // Ouro (se houver na logo)
+            },
         },
     },
 

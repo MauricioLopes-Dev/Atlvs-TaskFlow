@@ -8,41 +8,46 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <!-- Stats Overview -->
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-                <div class="bg-white p-6 rounded-lg shadow border-l-4 border-blue-500">
-                    <div class="text-sm font-medium text-gray-500 uppercase">Total de Projetos</div>
-                    <div class="text-2xl font-bold text-gray-900">{{ $totalProjects }}</div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-atlvs-primary">
+                    <div class="text-xs font-bold text-gray-400 uppercase tracking-wider">Total de Projetos</div>
+                    <div class="text-3xl font-extrabold text-atlvs-primary mt-1">{{ $totalProjects }}</div>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow border-l-4 border-green-500">
-                    <div class="text-sm font-medium text-gray-500 uppercase">Tarefas Concluídas</div>
-                    <div class="text-2xl font-bold text-gray-900">{{ $completedTasks }} / {{ $totalTasks }}</div>
-                    <div class="text-xs text-gray-500">{{ $completionPercentage }}% de conclusão total</div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-atlvs-accent">
+                    <div class="text-xs font-bold text-gray-400 uppercase tracking-wider">Tarefas Concluídas</div>
+                    <div class="text-3xl font-extrabold text-atlvs-primary mt-1">{{ $completedTasks }}<span class="text-lg text-gray-400 font-normal">/{{ $totalTasks }}</span></div>
+                    <div class="mt-2 w-full bg-gray-100 rounded-full h-1.5">
+                        <div class="bg-atlvs-accent h-1.5 rounded-full" style="width: {{ $completionPercentage }}%"></div>
+                    </div>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow border-l-4 border-red-500">
-                    <div class="text-sm font-medium text-gray-500 uppercase">Tarefas Travadas</div>
-                    <div class="text-2xl font-bold text-red-600">{{ $blockedTasks }}</div>
-                    <div class="text-xs text-gray-500">Requerem atenção imediata</div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-red-500">
+                    <div class="text-xs font-bold text-gray-400 uppercase tracking-wider">Tarefas Travadas</div>
+                    <div class="text-3xl font-extrabold text-red-600 mt-1">{{ $blockedTasks }}</div>
+                    <div class="text-xs text-red-400 mt-1 font-medium">Requerem atenção imediata</div>
                 </div>
-                <div class="bg-white p-6 rounded-lg shadow border-l-4 border-indigo-500">
-                    <div class="text-sm font-medium text-gray-500 uppercase">Equipe Ativa</div>
-                    <div class="text-2xl font-bold text-gray-900">{{ $teamWorkload->count() }}</div>
-                    <div class="text-xs text-gray-500">Membros no projeto</div>
+                <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 border-l-4 border-atlvs-secondary">
+                    <div class="text-xs font-bold text-gray-400 uppercase tracking-wider">Equipe Ativa</div>
+                    <div class="text-3xl font-extrabold text-atlvs-primary mt-1">{{ $teamWorkload->count() }}</div>
+                    <div class="text-xs text-gray-400 mt-1 font-medium">Membros no projeto</div>
                 </div>
             </div>
 
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
                 <!-- Projects Progress -->
-                <div class="bg-white p-6 rounded-lg shadow">
-                    <h3 class="text-lg font-bold mb-4 text-gray-800">Progresso dos Sites</h3>
-                    <div class="space-y-4">
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-lg font-bold text-atlvs-primary">Progresso dos Sites</h3>
+                        <a href="{{ route('projects.index') }}" class="text-sm font-bold text-atlvs-accent hover:underline">Ver todos</a>
+                    </div>
+                    <div class="space-y-6">
                         @foreach($projectsProgress as $project)
                             <div>
-                                <div class="flex justify-between mb-1">
-                                    <span class="text-sm font-medium text-gray-700">{{ $project->name }}</span>
-                                    <span class="text-sm font-medium text-gray-700">{{ $project->progress }}%</span>
+                                <div class="flex justify-between mb-2">
+                                    <span class="text-sm font-bold text-gray-700">{{ $project->name }}</span>
+                                    <span class="text-sm font-bold text-atlvs-accent">{{ $project->progress }}%</span>
                                 </div>
-                                <div class="w-full bg-gray-200 rounded-full h-2.5">
-                                    <div class="bg-blue-600 h-2.5 rounded-full" style="width: {{ $project->progress }}%"></div>
+                                <div class="w-full bg-gray-100 rounded-full h-3">
+                                    <div class="bg-atlvs-primary h-3 rounded-full transition-all duration-500" style="width: {{ $project->progress }}%"></div>
                                 </div>
                             </div>
                         @endforeach
@@ -50,27 +55,27 @@
                 </div>
 
                 <!-- Team Workload -->
-                <div class="bg-white p-6 rounded-lg shadow">
-                    <h3 class="text-lg font-bold mb-4 text-gray-800">Carga de Trabalho da Equipe</h3>
+                <div class="bg-white p-8 rounded-xl shadow-sm border border-gray-100">
+                    <h3 class="text-lg font-bold mb-6 text-atlvs-primary">Carga de Trabalho da Equipe</h3>
                     <div class="overflow-x-auto">
-                        <table class="min-w-full divide-y divide-gray-200">
+                        <table class="min-w-full">
                             <thead>
-                                <tr>
-                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Membro</th>
-                                    <th class="px-4 py-2 text-left text-xs font-medium text-gray-500 uppercase">Tarefas Ativas</th>
-                                    <th class="px-4 py-2 text-right text-xs font-medium text-gray-500 uppercase">Status</th>
+                                <tr class="border-b border-gray-100">
+                                    <th class="pb-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Membro</th>
+                                    <th class="pb-3 text-left text-xs font-bold text-gray-400 uppercase tracking-wider">Tarefas Ativas</th>
+                                    <th class="pb-3 text-right text-xs font-bold text-gray-400 uppercase tracking-wider">Status</th>
                                 </tr>
                             </thead>
-                            <tbody class="divide-y divide-gray-200">
+                            <tbody class="divide-y divide-gray-50">
                                 @foreach($teamWorkload as $user)
                                     <tr>
-                                        <td class="px-4 py-3 text-sm text-gray-900 font-medium">{{ $user->name }}</td>
-                                        <td class="px-4 py-3 text-sm text-gray-600">{{ $user->tasks_count }} pendentes</td>
-                                        <td class="px-4 py-3 text-right">
+                                        <td class="py-4 text-sm text-atlvs-primary font-bold">{{ $user->name }}</td>
+                                        <td class="py-4 text-sm text-gray-500">{{ $user->tasks_count }} pendentes</td>
+                                        <td class="py-4 text-right">
                                             @if($user->tasks_count > 5)
-                                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-red-100 text-red-800">Sobrecarregado</span>
+                                                <span class="px-3 py-1 text-xs font-bold rounded-full bg-red-50 text-red-600 border border-red-100">Sobrecarregado</span>
                                             @else
-                                                <span class="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">Disponível</span>
+                                                <span class="px-3 py-1 text-xs font-bold rounded-full bg-green-50 text-green-600 border border-green-100">Disponível</span>
                                             @endif
                                         </td>
                                     </tr>
