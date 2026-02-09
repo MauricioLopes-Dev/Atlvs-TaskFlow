@@ -1,66 +1,64 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Atlvs TaskFlow
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+O **Atlvs TaskFlow** é uma solução profissional de gerenciamento de projetos e tarefas desenvolvida em PHP com o framework Laravel. Projetada para equipes que buscam controle total sobre suas responsabilidades, a aplicação permite organizar fluxos de trabalho de forma clara e eficiente.
 
-## About Laravel
+## 🚀 Funcionalidades Principais
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+- **Gestão de Projetos**: Centralize todos os seus sites e desenvolvimentos em um só lugar.
+- **Controle de Tarefas**:
+    - **Prioridades**: Defina o que é urgente com níveis Baixa, Média e Alta.
+    - **Status Dinâmicos**: Acompanhe o progresso com status como *Pendente*, *Em Andamento*, *Travado* e *Concluído*.
+    - **Atribuição**: Designe responsáveis específicos para cada tarefa.
+- **Sistema de Convites**: Comece com um administrador e convide sua equipe conforme necessário.
+- **Interface Moderna**: Construída com Tailwind CSS para uma experiência de usuário limpa e profissional.
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+## 🛠️ Tecnologias Utilizadas
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+- **Backend**: PHP 8.1+ & Laravel 10
+- **Frontend**: Blade Templates & Tailwind CSS
+- **Banco de Dados**: SQLite (configuração inicial para facilidade de uso)
+- **Autenticação**: Laravel Breeze
 
-## Learning Laravel
+## 📋 Instruções de Instalação
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+Para rodar o projeto localmente, siga os passos abaixo:
 
-You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
+1. **Clonar o Repositório**:
+   ```bash
+   git clone https://github.com/MauricioLopes-Dev/Atlvs-TaskFlow.git
+   cd Atlvs-TaskFlow
+   ```
 
-If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+2. **Instalar Dependências**:
+   ```bash
+   composer install
+   npm install && npm run build
+   ```
 
-## Laravel Sponsors
+3. **Configurar o Ambiente**:
+   - O arquivo `.env` já está pré-configurado para usar SQLite.
+   - Certifique-se de que o arquivo `database/database.sqlite` existe:
+     ```bash
+     touch database/database.sqlite
+     ```
 
-We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
+4. **Executar Migrations e Seeders**:
+   ```bash
+   php artisan migrate --seed
+   ```
+   *Nota: O seeder criará um usuário administrador inicial:*
+   - **Email**: `admin@empresa.com`
+   - **Senha**: `senha123`
 
-### Premium Partners
+5. **Iniciar o Servidor**:
+   ```bash
+   php artisan serve
+   ```
+   Acesse em: `http://localhost:8000`
 
-- **[Vehikl](https://vehikl.com/)**
-- **[Tighten Co.](https://tighten.co)**
-- **[WebReinvent](https://webreinvent.com/)**
-- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
-- **[64 Robots](https://64robots.com)**
-- **[Curotec](https://www.curotec.com/services/technologies/laravel/)**
-- **[Cyber-Duck](https://cyber-duck.co.uk)**
-- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
-- **[Jump24](https://jump24.co.uk)**
-- **[Redberry](https://redberry.international/laravel/)**
-- **[Active Logic](https://activelogic.com)**
-- **[byte5](https://byte5.de)**
-- **[OP.GG](https://op.gg)**
+## 🤝 Contribuição
 
-## Contributing
+Este projeto foi desenvolvido para uso interno da empresa. Sinta-se à vontade para expandir as funcionalidades conforme a necessidade da sua equipe de 4 pessoas.
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
-
-## Code of Conduct
-
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
-
-## Security Vulnerabilities
-
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
-
-## License
-
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+---
+Desenvolvido com foco em produtividade e colaboração.
