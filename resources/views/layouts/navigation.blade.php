@@ -18,6 +18,9 @@
                     <x-nav-link :href="route('projects.index')" :active="request()->routeIs('projects.*')" class="text-gray-400 hover:text-white border-atlvs-cyan transition-colors">
                         {{ __('Projetos') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('invitations.index')" :active="request()->routeIs('invitations.*')" class="text-gray-400 hover:text-white border-atlvs-cyan transition-colors">
+                        {{ __('Equipe') }}
+                    </x-nav-link>
                 </div>
             </div>
 
