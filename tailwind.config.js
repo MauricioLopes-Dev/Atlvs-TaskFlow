@@ -12,13 +12,14 @@ export default {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Figtree', ...defaultTheme.fontFamily.sans],
+                sans: ['Instrument Sans', 'Figtree', ...defaultTheme.fontFamily.sans],
             },
             colors: {
-                'atlvs-primary': '#1a1a1a', // Preto elegante
-                'atlvs-secondary': '#333333', // Cinza escuro
-                'atlvs-accent': '#007bff', // Azul da logo (ajustável conforme a logo real)
-                'atlvs-gold': '#d4af37', // Ouro (se houver na logo)
+                'atlvs-black': '#000000',
+                'atlvs-dark': '#0a0a0a',
+                'atlvs-cyan': '#06b6d4', // cyan-500
+                'atlvs-cyan-light': '#22d3ee', // cyan-400
+                'atlvs-border': 'rgba(255, 255, 255, 0.1)',
             },
         },
     },

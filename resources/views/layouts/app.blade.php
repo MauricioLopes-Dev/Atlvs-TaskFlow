@@ -9,33 +9,45 @@
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
+        <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600,700&display=swap" rel="stylesheet" />
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
         
         <style>
-            .bg-atlvs-gradient {
-                background: linear-gradient(135deg, #1a1a1a 0%, #333333 100%);
+            body {
+                background-color: #000000;
+                color: #ffffff;
             }
-            .btn-atlvs {
-                background-color: #007bff;
+            .glass-card {
+                background: rgba(255, 255, 255, 0.03);
+                backdrop-filter: blur(10px);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            .btn-cyan {
+                background-color: #06b6d4;
+                color: #000000;
                 transition: all 0.3s ease;
             }
-            .btn-atlvs:hover {
-                background-color: #0056b3;
+            .btn-cyan:hover {
+                background-color: #22d3ee;
                 transform: translateY(-1px);
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+                box-shadow: 0 0 15px rgba(6, 182, 212, 0.4);
+            }
+            .text-gradient {
+                background: linear-gradient(to right, #06b6d4, #ffffff);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
             }
         </style>
     </head>
-    <body class="font-sans antialiased text-gray-900">
-        <div class="min-h-screen bg-gray-50">
+    <body class="font-sans antialiased">
+        <div class="min-h-screen bg-black">
             @include('layouts.navigation')
 
             <!-- Page Heading -->
             @if (isset($header))
-                <header class="bg-white border-b border-gray-200">
+                <header class="bg-black/50 backdrop-blur border-b border-white/10 sticky top-16 z-40">
                     <div class="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
                         {{ $header }}
                     </div>
@@ -47,7 +59,10 @@
                 {{ $slot }}
             </main>
             
-            <footer class="py-8 text-center text-sm text-gray-500">
+            <footer class="py-12 text-center text-sm text-gray-500 border-t border-white/5 mt-12">
+                <div class="mb-4 font-bold text-lg">
+                    <span class="text-atlvs-cyan">ATL</span>VS
+                </div>
                 &copy; {{ date('Y') }} Atlvs - Todos os direitos reservados.
             </footer>
         </div>
