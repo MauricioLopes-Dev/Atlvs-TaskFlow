@@ -11,6 +11,13 @@
                 <a href="{{ route('projects.edit', $project) }}" class="bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 font-black py-2.5 px-6 rounded-full text-[10px] uppercase tracking-widest transition-all">
                     Editar Projeto
                 </a>
+                <form action="{{ route('projects.destroy', $project) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir este projeto? Esta ação não pode ser desfeita.')">
+                    @csrf
+                    @method('DELETE')
+                    <button type="submit" class="bg-red-500/10 border border-red-500/20 text-red-400 hover:text-red-300 hover:bg-red-500/20 font-black py-2.5 px-6 rounded-full text-[10px] uppercase tracking-widest transition-all">
+                        Excluir Projeto
+                    </button>
+                </form>
             </div>
         </div>
     </x-slot>
@@ -21,6 +28,13 @@
                 <div class="bg-atlvs-cyan/10 border border-atlvs-cyan/20 text-atlvs-cyan px-6 py-4 rounded-2xl relative mb-8 flex items-center backdrop-blur-sm" role="alert">
                     <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
                     <span class="block sm:inline font-bold text-sm uppercase tracking-tight">{{ session('success') }}</span>
+                </div>
+            @endif
+
+            @if(session('error'))
+                <div class="bg-red-500/10 border border-red-500/20 text-red-400 px-6 py-4 rounded-2xl relative mb-8 flex items-center backdrop-blur-sm" role="alert">
+                    <svg class="w-5 h-5 mr-3" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M18 10A8 8 0 112 10a8 8 0 0116 0zM9 7a1 1 0 112 0v4a1 1 0 11-2 0V7zm1 8a1.25 1.25 0 100-2.5A1.25 1.25 0 0010 15z" clip-rule="evenodd"></path></svg>
+                    <span class="block sm:inline font-bold text-sm uppercase tracking-tight">{{ session('error') }}</span>
                 </div>
             @endif
 
@@ -38,7 +52,7 @@
                     <div class="w-6 h-6 rounded-full bg-atlvs-cyan/20 flex items-center justify-center mr-3">
                         <svg class="w-3 h-3 text-atlvs-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                     </div>
-                    Proprietário: <span class="text-white ml-2">{{ $project->owner->name ?? 'N/A' }}</span>
+                    Proprietário: <span class="text-white ml-2">{{ $project->owner?->name ?? 'N/A' }}</span>
                 </div>
             </div>
 
@@ -61,8 +75,9 @@
                                                 'medium' => 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
                                                 'high' => 'bg-red-500/10 text-red-500 border-red-500/20',
                                             ];
+                                            $priorityClass = $priorityColors[$task->priority] ?? $priorityColors['low'];
                                         @endphp
-                                        <span class="ml-4 px-3 py-1 text-[9px] font-black uppercase tracking-[0.15em] rounded-full border {{ $priorityColors[$task->priority ?? 'low'] }}">
+                                        <span class="ml-4 px-3 py-1 text-[9px] font-black uppercase tracking-[0.15em] rounded-full border {{ $priorityClass }}">
                                             {{ $task->priority ?? 'low' }}
                                         </span>
                                     </div>
@@ -110,11 +125,22 @@
                             <div class="mt-10 flex justify-between items-center">
                                 <div class="flex items-center bg-white/5 px-4 py-2 rounded-2xl border border-white/5">
                                     <div class="w-8 h-8 rounded-full bg-gradient-to-br from-atlvs-cyan to-white flex items-center justify-center text-black text-[10px] font-black mr-3 shadow-lg">
-                                        {{ strtoupper(substr($task->assignee->name ?? '?', 0, 2)) }}
+                                        {{ strtoupper(substr($task->assignee?->name ?? '?', 0, 2)) }}
                                     </div>
                                     <div>
                                         <p class="text-[9px] font-black text-gray-600 uppercase tracking-tighter">Responsável</p>
-                                        <p class="text-xs text-white font-bold">{{ $task->assignee->name ?? 'Livre para assumir' }}</p>
+                                        <p class="text-xs text-white font-bold">{{ $task->assignee?->name ?? 'Livre para assumir' }}</p>
+                                        @if(!$task->assignee)
+                                            <form action="{{ route('tasks.claim', $task) }}" method="POST" class="mt-2">
+                                                @csrf
+                                                @method('PATCH')
+                                                <button type="submit" class="text-[9px] font-black uppercase tracking-widest text-atlvs-cyan hover:text-white transition-colors">
+                                                    Assumir tarefa
+                                                </button>
+                                            </form>
+                                        @elseif($task->assigned_to === auth()->id())
+                                            <p class="mt-2 text-[9px] font-black uppercase tracking-widest text-atlvs-cyan">Vinculada a você</p>
+                                        @endif
                                     </div>
                                 </div>
                                 <div class="flex space-x-6">
@@ -152,7 +178,7 @@
                                     @foreach($task->comments ?? [] as $comment)
                                         <div class="bg-white/5 p-6 rounded-2xl border border-white/5 hover:border-white/10 transition-all">
                                             <div class="flex justify-between items-center mb-3">
-                                                <span class="text-[10px] font-black text-atlvs-cyan uppercase tracking-widest">{{ $comment->user->name ?? 'Usuário Desconhecido' }}</span>
+                                                <span class="text-[10px] font-black text-atlvs-cyan uppercase tracking-widest">{{ $comment->user?->name ?? 'Usuário Desconhecido' }}</span>
                                                 <span class="text-[9px] font-bold text-gray-600 uppercase">{{ $comment->created_at ? $comment->created_at->diffForHumans() : '' }}</span>
                                             </div>
                                             <p class="text-sm text-gray-400 leading-relaxed font-medium">{{ $comment->content }}</p>
@@ -196,7 +222,7 @@
                                                     </div>
                                                     <div class="flex space-x-3">
                                                         @if($attachment->file_path)
-                                                            <a href="{{ route("storage.show", ["path" => $attachment->file_path]) }}" target="_blank" class="text-atlvs-cyan hover:text-white transition-colors">
+                                                            <a href="{{ route("storage.serve", ["path" => $attachment->file_path]) }}" target="_blank" class="text-atlvs-cyan hover:text-white transition-colors">
                                                         @else
                                                             <a href="#" class="text-gray-500 cursor-not-allowed">
                                                         @endif
@@ -259,7 +285,7 @@
                                     <div class="flex space-x-4 items-start text-xs text-gray-400">
                                         <div class="w-1.5 h-1.5 rounded-full bg-atlvs-cyan mt-1.5 shadow-[0_0_5px_rgba(6,182,212,0.5)]"></div>
                                         <div class="flex-1">
-                                            <span class="text-white font-bold">{{ $log->user->name ?? 'Sistema' }}</span>
+                                            <span class="text-white font-bold">{{ $log->user?->name ?? 'Sistema' }}</span>
                                             <span class="text-gray-500">{{ $log->description }}</span>
                                             <span class="text-[9px] font-bold text-gray-600 uppercase">{{ $log->created_at ? $log->created_at->diffForHumans() : '' }}</span>
                                         </div>

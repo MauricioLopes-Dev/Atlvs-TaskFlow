@@ -144,6 +144,57 @@ class TaskController extends Controller
         return back()->with('success', 'Status da tarefa atualizado!');
     }
 
+    public function updateLinks(Request $request, Task $task)
+    {
+        $validated = $request->validate([
+            'figma_link' => 'nullable|url',
+            'repo_link' => 'nullable|url',
+            'staging_link' => 'nullable|url',
+        ]);
+
+        $task->update($validated);
+
+        ActivityLog::create([
+            'task_id' => $task->id,
+            'user_id' => Auth::id(),
+            'action' => 'links_updated',
+            'description' => 'atualizou os links rápidos da tarefa',
+        ]);
+
+        return back()->with('success', 'Links da tarefa atualizados com sucesso!');
+    }
+
+
+    public function claim(Task $task)
+    {
+        $user = Auth::user();
+
+        if (!$user || !$user->projects->contains($task->project)) {
+            abort(403, 'Acesso não autorizado a esta tarefa.');
+        }
+
+        if ($task->assigned_to && $task->assigned_to !== $user->id) {
+            return back()->with('error', 'Esta tarefa já está vinculada a outro responsável.');
+        }
+
+        if ($task->assigned_to === $user->id) {
+            return back()->with('success', 'Esta tarefa já está vinculada a você.');
+        }
+
+        $task->update([
+            'assigned_to' => $user->id,
+        ]);
+
+        ActivityLog::create([
+            'task_id' => $task->id,
+            'user_id' => $user->id,
+            'action' => 'claimed',
+            'description' => 'assumiu a tarefa',
+        ]);
+
+        return back()->with('success', 'Tarefa vinculada a você com sucesso!');
+    }
+
     public function uploadAttachment(Request $request, Task $task)
     {
         $request->validate([
