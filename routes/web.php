@@ -22,7 +22,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('tasks/{task}/comments', [CommentController::class, 'store'])->name('comments.store');
     Route::delete('comments/{comment}', [CommentController::class, 'destroy'])->name('comments.destroy');
 
+    // Anexos
+    Route::post('tasks/{task}/attachments', [TaskController::class, 'uploadAttachment'])->name('tasks.attachments.store');
+    Route::delete('attachments/{attachment}', [TaskController::class, 'deleteAttachment'])->name('attachments.destroy');
+
     Route::get('/invitations', [InvitationController::class, 'index'])->name('invitations.index');
+    // Rota pública para aceitar convite (fora do middleware auth se necessário, mas aqui está dentro)
     Route::post('/invitations', [InvitationController::class, 'store'])->name('invitations.store');
     Route::delete('/invitations/{invitation}', [InvitationController::class, 'destroy'])->name('invitations.destroy');
 

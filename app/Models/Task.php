@@ -17,7 +17,10 @@ class Task extends Model
         'status',
         'project_id',
         'assigned_to',
-        'due_date'
+        'due_date',
+        'figma_link',
+        'repo_link',
+        'staging_link'
     ];
 
     protected $casts = [
@@ -42,5 +45,10 @@ class Task extends Model
     public function activityLogs()
     {
         return $this->hasMany(ActivityLog::class)->latest();
+    }
+
+    public function attachments()
+    {
+        return $this->hasMany(Attachment::class)->latest();
     }
 }

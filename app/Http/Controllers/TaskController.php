@@ -6,8 +6,10 @@ use App\Models\Task;
 use App\Models\Project;
 use App\Models\User;
 use App\Models\ActivityLog;
+use App\Models\Attachment;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class TaskController extends Controller
 {
@@ -28,6 +30,9 @@ class TaskController extends Controller
             'project_id' => 'required|exists:projects,id',
             'assigned_to' => 'nullable|exists:users,id',
             'due_date' => 'nullable|date',
+            'figma_link' => 'nullable|url',
+            'repo_link' => 'nullable|url',
+            'staging_link' => 'nullable|url',
         ]);
 
         $task = Task::create($validated);
@@ -63,6 +68,9 @@ class TaskController extends Controller
             'status' => 'required|in:pending,in_progress,blocked,completed',
             'assigned_to' => 'nullable|exists:users,id',
             'due_date' => 'nullable|date',
+            'figma_link' => 'nullable|url',
+            'repo_link' => 'nullable|url',
+            'staging_link' => 'nullable|url',
         ]);
 
         $oldStatus = $task->status;
@@ -134,6 +142,55 @@ class TaskController extends Controller
         }
 
         return back()->with('success', 'Status da tarefa atualizado!');
+    }
+
+    public function uploadAttachment(Request $request, Task $task)
+    {
+        $request->validate([
+            'file' => 'required|file|max:10240', // 10MB max
+        ]);
+
+        if ($request->hasFile('file')) {
+            $file = $request->file('file');
+            $path = $file->store('attachments/' . $task->id, 'public');
+
+            Attachment::create([
+                'task_id' => $task->id,
+                'user_id' => Auth::id(),
+                'file_name' => $file->getClientOriginalName(),
+                'file_path' => $path,
+                'file_type' => $file->getClientMimeType(),
+                'file_size' => $file->getSize(),
+            ]);
+
+            ActivityLog::create([
+                'task_id' => $task->id,
+                'user_id' => Auth::id(),
+                'action' => 'attachment_added',
+                'description' => "adicionou um anexo: " . $file->getClientOriginalName(),
+            ]);
+
+            return back()->with('success', 'Arquivo enviado com sucesso!');
+        }
+
+        return back()->with('error', 'Falha ao enviar arquivo.');
+    }
+
+    public function deleteAttachment(Attachment $attachment)
+    {
+        $task = $attachment->task;
+        Storage::disk('public')->delete($attachment->file_path);
+        
+        ActivityLog::create([
+            'task_id' => $task->id,
+            'user_id' => Auth::id(),
+            'action' => 'attachment_removed',
+            'description' => "removeu o anexo: " . $attachment->file_name,
+        ]);
+
+        $attachment->delete();
+
+        return back()->with('success', 'Anexo removido com sucesso!');
     }
 
     private function notifyUser($userId, $message, $link)
