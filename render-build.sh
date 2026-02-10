@@ -2,21 +2,18 @@
 # exit on error
 set -o errexit
 
-echo "Installing composer dependencies..."
+echo "--- Iniciando Build PHP Nativo ---"
+
+# Instalar dependências do PHP
 composer install --no-interaction --optimize-autoloader --no-dev
 
-echo "Installing npm dependencies..."
+# Instalar dependências do Node e compilar assets
 npm install
-
-echo "Compiling assets..."
 npm run build
 
-echo "Running migrations..."
-# O comando migrate --force é necessário em produção
-php artisan migrate --force
+# Limpar caches para garantir que as novas configurações sejam lidas
+php artisan config:clear
+php artisan view:clear
+php artisan route:clear
 
-echo "Seeding admin user..."
-# Opcional: Garante que o admin exista no banco da nuvem
-php artisan db:seed --class=AdminUserSeeder --force || true
-
-echo "Build finished successfully!"
+echo "--- Build Finalizado com Sucesso ---"
