@@ -38,4 +38,9 @@ class Task extends Model
     {
         return $this->hasMany(Comment::class)->latest();
     }
+
+    public function activityLogs()
+    {
+        return $this->hasMany(ActivityLog::class)->latest();
+    }
 }

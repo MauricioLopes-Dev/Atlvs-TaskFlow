@@ -101,41 +101,64 @@
                             </div>
                         </div>
 
-                        <!-- Comments Section -->
-                        <div class="bg-white/[0.02] p-10">
-                            <div class="flex items-center mb-8">
-                                <div class="w-1.5 h-1.5 rounded-full bg-atlvs-cyan mr-3 shadow-[0_0_8px_rgba(6,182,212,0.8)]"></div>
-                                <h5 class="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em]">Discussão Técnica ({{ $task->comments->count() }})</h5>
+                        <!-- Details Section (History & Comments) -->
+                        <div x-data="{ activeTab: 'comments' }" class="bg-white/[0.02] p-10">
+                            <div class="flex space-x-8 mb-8 border-b border-white/5">
+                                <button @click="activeTab = 'comments'" :class="activeTab === 'comments' ? 'text-atlvs-cyan border-b-2 border-atlvs-cyan' : 'text-gray-500'" class="pb-4 text-[10px] font-black uppercase tracking-[0.2em] transition-all">
+                                    Discussão Técnica ({{ $task->comments->count() }})
+                                </button>
+                                <button @click="activeTab = 'history'" :class="activeTab === 'history' ? 'text-atlvs-cyan border-b-2 border-atlvs-cyan' : 'text-gray-500'" class="pb-4 text-[10px] font-black uppercase tracking-[0.2em] transition-all">
+                                    Histórico de Atividade
+                                </button>
                             </div>
                             
-                            <div class="space-y-6 mb-10">
-                                @foreach($task->comments as $comment)
-                                    <div class="bg-white/5 p-6 rounded-2xl border border-white/5 hover:border-white/10 transition-all">
-                                        <div class="flex justify-between items-center mb-3">
-                                            <span class="text-[10px] font-black text-atlvs-cyan uppercase tracking-widest">{{ $comment->user->name }}</span>
-                                            <span class="text-[9px] font-bold text-gray-600 uppercase">{{ $comment->created_at->diffForHumans() }}</span>
+                            <!-- Comments Tab -->
+                            <div x-show="activeTab === 'comments'" class="space-y-6">
+                                <div class="space-y-6 mb-10">
+                                    @foreach($task->comments as $comment)
+                                        <div class="bg-white/5 p-6 rounded-2xl border border-white/5 hover:border-white/10 transition-all">
+                                            <div class="flex justify-between items-center mb-3">
+                                                <span class="text-[10px] font-black text-atlvs-cyan uppercase tracking-widest">{{ $comment->user->name }}</span>
+                                                <span class="text-[9px] font-bold text-gray-600 uppercase">{{ $comment->created_at->diffForHumans() }}</span>
+                                            </div>
+                                            <p class="text-sm text-gray-400 leading-relaxed font-medium">{{ $comment->content }}</p>
+                                            @if($comment->user_id === Auth::id())
+                                                <form action="{{ route('comments.destroy', $comment) }}" method="POST" class="mt-4 pt-4 border-t border-white/5">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit" class="text-[9px] font-black text-red-500/50 hover:text-red-500 uppercase tracking-widest transition-colors">Remover comentário</button>
+                                                </form>
+                                            @endif
                                         </div>
-                                        <p class="text-sm text-gray-400 leading-relaxed font-medium">{{ $comment->content }}</p>
-                                        @if($comment->user_id === Auth::id())
-                                            <form action="{{ route('comments.destroy', $comment) }}" method="POST" class="mt-4 pt-4 border-t border-white/5">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit" class="text-[9px] font-black text-red-500/50 hover:text-red-500 uppercase tracking-widest transition-colors">Remover comentário</button>
-                                            </form>
-                                        @endif
+                                    @endforeach
+                                </div>
+
+                                <form action="{{ route('comments.store', $task) }}" method="POST">
+                                    @csrf
+                                    <div class="flex space-x-4">
+                                        <input type="text" name="content" placeholder="Escreva uma atualização técnica..." class="flex-1 bg-black text-sm text-white rounded-2xl border-white/10 shadow-sm focus:border-atlvs-cyan focus:ring-0 transition-all placeholder-gray-700 font-medium" required>
+                                        <button type="submit" class="btn-cyan font-black text-[9px] uppercase tracking-widest py-3 px-8 rounded-2xl shadow-xl">
+                                            Enviar
+                                        </button>
                                     </div>
-                                @endforeach
+                                </form>
                             </div>
 
-                            <form action="{{ route('comments.store', $task) }}" method="POST">
-                                @csrf
-                                <div class="flex space-x-4">
-                                    <input type="text" name="content" placeholder="Escreva uma atualização técnica..." class="flex-1 bg-black text-sm text-white rounded-2xl border-white/10 shadow-sm focus:border-atlvs-cyan focus:ring-0 transition-all placeholder-gray-700 font-medium" required>
-                                    <button type="submit" class="btn-cyan font-black text-[9px] uppercase tracking-widest py-3 px-8 rounded-2xl shadow-xl">
-                                        Enviar
-                                    </button>
-                                </div>
-                            </form>
+                            <!-- History Tab -->
+                            <div x-show="activeTab === 'history'" class="space-y-4">
+                                @forelse($task->activityLogs as $log)
+                                    <div class="flex items-start space-x-4 text-xs">
+                                        <div class="w-1.5 h-1.5 rounded-full bg-atlvs-cyan mt-1.5 shadow-[0_0_5px_rgba(6,182,212,0.5)]"></div>
+                                        <div class="flex-1">
+                                            <span class="text-white font-bold">{{ $log->user->name }}</span>
+                                            <span class="text-gray-500">{{ $log->description }}</span>
+                                            <span class="text-[10px] text-gray-700 ml-2 uppercase font-black">{{ $log->created_at->diffForHumans() }}</span>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <p class="text-xs text-gray-600 italic">Nenhuma atividade registrada ainda.</p>
+                                @endforelse
+                            </div>
                         </div>
                     </div>
                 @empty
