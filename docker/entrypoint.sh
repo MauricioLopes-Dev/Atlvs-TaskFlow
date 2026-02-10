@@ -9,6 +9,9 @@ chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 echo "Running migrations..."
 php artisan migrate --force
 
+# Create storage link
+php artisan storage:link
+
 echo "Seeding admin user..."
 php artisan db:seed --class=AdminUserSeeder --force || true
 
