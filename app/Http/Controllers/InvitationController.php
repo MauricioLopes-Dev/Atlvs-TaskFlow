@@ -18,18 +18,22 @@ class InvitationController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            "email" => "required|email|unique:users,email|unique:invitations,email",
+            "email" => "required|email|unique:users,email",
         ]);
 
         $token = Str::random(32);
 
-        Invitation::create([
-            "email" => $request->email,
-            "token" => $token,
-            "expires_at" => now()->addDays(7),
-        ]);
+        // Se já existir um convite para este e-mail, atualizamos o token e a expiração
+        // Caso contrário, criamos um novo.
+        Invitation::updateOrCreate(
+            ['email' => $request->email],
+            [
+                'token' => $token,
+                'expires_at' => now()->addDays(7),
+            ]
+        );
 
-        return back()->with("success", "Convite gerado com sucesso!");
+        return back()->with("success", "Convite gerado/atualizado com sucesso!");
     }
 
     public function destroy(Invitation $invitation)
