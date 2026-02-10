@@ -44,11 +44,22 @@ class ProjectController extends Controller
 
     public function show(Project $project)
     {
-        if (!Auth::user()->projects->contains($project)) {
-            abort(403, 'Acesso não autorizado a este projeto.');
+        try {
+            if (!Auth::user()->projects->contains($project)) {
+                abort(403, 'Acesso não autorizado a este projeto.');
+            }
+            // Carregar relacionamentos com segurança
+            $project->load([
+                'tasks' => function ($query) {
+                    $query->with(['assignee', 'comments.user', 'attachments']);
+                },
+                'owner'
+            ]);
+            return view('projects.show', compact('project'));
+        } catch (\Exception $e) {
+            \Log::error('Erro ao carregar projeto: ' . $e->getMessage());
+            return redirect()->route('projects.index')->with('error', 'Erro ao carregar o projeto.');
         }
-        $project->load(['tasks.assignee', 'tasks.comments.user', 'owner', 'tasks.attachments']);
-        return view('projects.show', compact('project'));
     }
 
     public function edit(Project $project)
