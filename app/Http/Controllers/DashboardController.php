@@ -16,8 +16,8 @@ class DashboardController extends Controller
             $user = Auth::user();
             
             // Obter IDs dos projetos do usuário
-            $userProjectsIds = $user->projects()->pluck('projects.id')->toArray();
-            
+            $userProjects = $user->projects; // Carrega os projetos do usuário
+            $userProjectsIds = $userProjects->pluck(\'id\')->toArray();           
             // Se não houver projetos, retornar dados vazios
             if (empty($userProjectsIds)) {
                 return view('dashboard', [

@@ -136,10 +136,10 @@
                         <div x-data="{ activeTab: 'comments' }" class="bg-white/[0.02] p-10">
                             <div class="flex space-x-8 mb-8 border-b border-white/5">
                                 <button @click="activeTab = 'comments'" :class="activeTab === 'comments' ? 'text-atlvs-cyan border-b-2 border-atlvs-cyan' : 'text-gray-500'" class="pb-4 text-[10px] font-black uppercase tracking-[0.2em] transition-all">
-                                    Discussão Técnica ({{ $task->comments->count() }})
+                                    Discussão Técnica ({{ $task->comments->count() ?? 0 }})
                                 </button>
                                 <button @click="activeTab = 'resources'" :class="activeTab === 'resources' ? 'text-atlvs-cyan border-b-2 border-atlvs-cyan' : 'text-gray-500'" class="pb-4 text-[10px] font-black uppercase tracking-[0.2em] transition-all">
-                                    Recursos & Anexos ({{ $task->attachments->count() }})
+                                    Recursos & Anexos ({{ $task->attachments->count() ?? 0 }})
                                 </button>
                                 <button @click="activeTab = 'history'" :class="activeTab === 'history' ? 'text-atlvs-cyan border-b-2 border-atlvs-cyan' : 'text-gray-500'" class="pb-4 text-[10px] font-black uppercase tracking-[0.2em] transition-all">
                                     Histórico
@@ -149,7 +149,7 @@
                             <!-- Comments Tab -->
                             <div x-show="activeTab === 'comments'" class="space-y-6">
                                 <div class="space-y-6 mb-10">
-                                    @foreach($task->comments as $comment)
+                                    @foreach($task->comments ?? [] as $comment)
                                         <div class="bg-white/5 p-6 rounded-2xl border border-white/5 hover:border-white/10 transition-all">
                                             <div class="flex justify-between items-center mb-3">
                                                 <span class="text-[10px] font-black text-atlvs-cyan uppercase tracking-widest">{{ $comment->user ? $comment->user->name : 'Usuário Desconhecido' }}</span>
@@ -185,7 +185,7 @@
                                     <div>
                                         <h5 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Arquivos Anexados</h5>
                                         <div class="space-y-3">
-                                            @forelse($task->attachments as $attachment)
+                                            @forelse($task->attachments ?? [] as $attachment)
                                                 <div class="flex items-center justify-between bg-white/5 p-4 rounded-2xl border border-white/5">
                                                     <div class="flex items-center">
                                                         <svg class="w-5 h-5 text-gray-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
