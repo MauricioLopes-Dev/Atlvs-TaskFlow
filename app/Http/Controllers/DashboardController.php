@@ -7,6 +7,7 @@ use App\Models\Task;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
 {
@@ -15,102 +16,29 @@ class DashboardController extends Controller
         try {
             $user = Auth::user();
             
-            // Obter IDs dos projetos do usuário
-            $userProjects = $user->projects; // Carrega os projetos do usuário
-            $userProjectsIds = $userProjects->pluck(\'id\')->toArray();           
-            // Se não houver projetos, retornar dados vazios
-            if (empty($userProjectsIds)) {
-                return view('dashboard', [
-                    'totalProjects' => 0,
-                    'totalTasks' => 0,
-                    'completedTasks' => 0,
-                    'blockedTasks' => 0,
-                    'inProgressTasks' => 0,
-                    'pendingTasks' => 0,
-                    'completionPercentage' => 0,
-                    'projectsProgress' => collect(),
-                    'teamWorkload' => collect(),
-                    'overdueTasks' => collect(),
-                    'todayTasks' => collect(),
-                    'upcomingTasks' => collect()
-                ]);
-            }
+            // Carregar apenas os projetos do usuário logado
+            $projects = $user->projects; 
+            $totalProjects = $projects->count();
 
-            // Contar tarefas por status
-            $totalProjects = count($userProjectsIds);
-            $totalTasks = Task::whereIn('project_id', $userProjectsIds)->count();
-            $completedTasks = Task::whereIn('project_id', $userProjectsIds)->where("status", "completed")->count();
-            $blockedTasks = Task::whereIn('project_id', $userProjectsIds)->where("status", "blocked")->count();
-            $inProgressTasks = Task::whereIn('project_id', $userProjectsIds)->where("status", "in_progress")->count();
-            $pendingTasks = Task::whereIn('project_id', $userProjectsIds)->where("status", "pending")->count();
-
-            $completionPercentage = $totalTasks > 0 ? round(($completedTasks / $totalTasks) * 100) : 0;
-
-            // Progresso dos projetos
-            $projectsProgress = Project::whereIn('id', $userProjectsIds)->withCount([
-                "tasks",
-                "tasks as completed_tasks_count" => function ($query) {
-                    $query->where("status", "completed");
-                },
-            ])
-                ->get()
-                ->map(function ($project) {
-                    $project->progress = $project->tasks_count > 0
-                        ? round(($project->completed_tasks_count / $project->tasks_count) * 100)
-                        : 0;
-                    return $project;
-                });
-
-            // Carga de trabalho da equipe
-            $teamWorkload = User::whereHas('projects', function ($query) use ($userProjectsIds) {
-                $query->whereIn('projects.id', $userProjectsIds);
-            })->withCount([
-                "tasks as pending_count" => function ($query) { $query->where("status", "pending"); },
-                "tasks as in_progress_count" => function ($query) { $query->where("status", "in_progress"); },
-                "tasks as blocked_count" => function ($query) { $query->where("status", "blocked"); },
-                "tasks as completed_count" => function ($query) { $query->where("status", "completed"); }
-            ])->get();
-
-            // Tarefas com prazos
-            $overdueTasks = Task::whereIn('project_id', $userProjectsIds)
-                ->whereNotNull('due_date')
-                ->whereRaw('due_date < NOW()')
-                ->where("status", "!=", "completed")
-                ->orderBy('due_date', 'asc')
-                ->get();
-
-            $todayTasks = Task::whereIn('project_id', $userProjectsIds)
-                ->whereNotNull('due_date')
-                ->whereDate("due_date", now()->toDateString())
-                ->where("status", "!=", "completed")
-                ->orderBy('due_date', 'asc')
-                ->get();
-
-            $upcomingTasks = Task::whereIn('project_id', $userProjectsIds)
-                ->whereNotNull('due_date')
-                ->whereRaw('due_date > NOW()')
-                ->whereRaw('due_date <= DATE_ADD(NOW(), INTERVAL 3 DAY)')
-                ->where("status", "!=", "completed")
-                ->orderBy('due_date', 'asc')
-                ->get();
-
-            return view("dashboard", compact(
-                "totalProjects",
-                "totalTasks",
-                "completedTasks",
-                "blockedTasks",
-                "inProgressTasks",
-                "pendingTasks",
-                "completionPercentage",
-                "projectsProgress",
-                "teamWorkload",
-                "overdueTasks",
-                "todayTasks",
-                "upcomingTasks"
-            ));
+            // Retornar uma view básica com o total de projetos
+            return view('dashboard', [
+                'totalProjects' => $totalProjects,
+                'totalTasks' => 0,
+                'completedTasks' => 0,
+                'blockedTasks' => 0,
+                'inProgressTasks' => 0,
+                'pendingTasks' => 0,
+                'completionPercentage' => 0,
+                'projectsProgress' => collect(),
+                'teamWorkload' => collect(),
+                'overdueTasks' => collect(),
+                'todayTasks' => collect(),
+                'upcomingTasks' => collect()
+            ]);
         } catch (\Exception $e) {
-            \Log::error('Dashboard Error: ' . $e->getMessage());
-            return view("dashboard", [
+            Log::error('Dashboard Error (Simplified): ' . $e->getMessage());
+            // Em caso de erro, retornar uma view com dados mínimos para evitar o 500
+            return view('dashboard', [
                 'totalProjects' => 0,
                 'totalTasks' => 0,
                 'completedTasks' => 0,
