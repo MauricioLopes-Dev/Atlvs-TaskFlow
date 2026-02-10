@@ -12,16 +12,18 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        $totalProjects = Project::count();
-        $totalTasks = Task::count();
-        $completedTasks = Task::where("status", "completed")->count();
-        $blockedTasks = Task::where("status", "blocked")->count();
-        $inProgressTasks = Task::where("status", "in_progress")->count();
-        $pendingTasks = Task::where("status", "pending")->count();
+        $userProjectsIds = Auth::user()->projects->pluck("id")->toArray();
+
+        $totalProjects = Project::whereIn('id', $userProjectsIds)->count();
+        $totalTasks = Task::whereIn('project_id', $userProjectsIds)->count();
+        $completedTasks = Task::whereIn('project_id', $userProjectsIds)->where("status", "completed")->count();
+        $blockedTasks = Task::whereIn('project_id', $userProjectsIds)->where("status", "blocked")->count();
+        $inProgressTasks = Task::whereIn('project_id', $userProjectsIds)->where("status", "in_progress")->count();
+        $pendingTasks = Task::whereIn('project_id', $userProjectsIds)->where("status", "pending")->count();
 
         $completionPercentage = $totalTasks > 0 ? round(($completedTasks / $totalTasks) * 100) : 0;
 
-        $projectsProgress = Project::withCount([
+        $projectsProgress = Project::whereIn('id', $userProjectsIds)->withCount([
             "tasks",
             "tasks as completed_tasks_count" => function ($query) {
                 $query->where("status", "completed");
@@ -36,45 +38,33 @@ class DashboardController extends Controller
             });
 
         // Carga de trabalho detalhada por usuário
-        $teamWorkload = User::withCount([
-            "tasks as pending_count" => function ($query) {
-                $query->where("status", "pending");
-            },
-            "tasks as in_progress_count" => function ($query) {
-                $query->where("status", "in_progress");
-            },
-            "tasks as blocked_count" => function ($query) {
-                $query->where("status", "blocked");
-            },
-            "tasks as completed_count" => function ($query) {
-                $query->where("status", "completed");
-            },
+        $teamWorkload = User::whereHas('projects', function ($query) use ($userProjectsIds) {
+            $query->whereIn('projects.id', $userProjectsIds);
+        })->withCount([
+            "tasks as pending_count" => function ($query) { $query->where("status", "pending"); },
+            "tasks as in_progress_count" => function ($query) { $query->where("status", "in_progress"); },
+            "tasks as blocked_count" => function ($query) { $query->where("status", "blocked"); },
+            "tasks as completed_count" => function ($query) { $query->where("status", "completed"); }
         ])->get();
 
         // Tarefas com prazos
-        $overdueTasks = Task::where("due_date", "<", now())
+        $overdueTasks = Task::whereIn('project_id', $userProjectsIds)
+            ->whereNotNull('due_date')
+            ->where("due_date", "<", now())
             ->where("status", "!=", "completed")
-            ->whereIn(
-                "project_id",
-                Auth::user()->projects->pluck("id")
-            )
             ->get();
 
-        $todayTasks = Task::whereDate("due_date", now()->toDateString())
+        $todayTasks = Task::whereIn('project_id', $userProjectsIds)
+            ->whereNotNull('due_date')
+            ->whereDate("due_date", now()->toDateString())
             ->where("status", "!=", "completed")
-            ->whereIn(
-                "project_id",
-                Auth::user()->projects->pluck("id")
-            )
             ->get();
 
-        $upcomingTasks = Task::where("due_date", ">", now())
+        $upcomingTasks = Task::whereIn('project_id', $userProjectsIds)
+            ->whereNotNull('due_date')
+            ->where("due_date", ">", now())
             ->where("due_date", "<=", now()->addDays(3))
             ->where("status", "!=", "completed")
-            ->whereIn(
-                "project_id",
-                Auth::user()->projects->pluck("id")
-            )
             ->get();
 
         return view("dashboard", compact(

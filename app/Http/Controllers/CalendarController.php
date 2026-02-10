@@ -33,18 +33,18 @@ class CalendarController extends Controller
         $events = [];
         foreach ($tasks as $task) {
             $className = "";
-            if ($task->due_date->isToday()) {
+            if ($task->due_date && $task->due_date->isToday()) {
                 $className = "bg-atlvs-cyan text-black";
-            } elseif ($task->due_date->isPast() && !$task->status == "completed") {
+            } elseif ($task->due_date && $task->due_date->isPast() && !$task->status == "completed") {
                 $className = "bg-red-500 text-white";
-            } elseif ($task->due_date->diffInDays(now()) <= 3) {
+            } elseif ($task->due_date && $task->due_date->diffInDays(now()) <= 3) {
                 $className = "bg-yellow-500 text-black";
             }
 
             $events[] = [
                 "id" => $task->id,
                 "title" => $task->title,
-                "start" => $task->due_date->format("Y-m-d"),
+                "start" => $task->due_date ? $task->due_date->format("Y-m-d") : null,
                 "url" => route("projects.show", $task->project_id),
                 "className" => $className,
             ];
