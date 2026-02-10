@@ -15,6 +15,8 @@ class DashboardController extends Controller
         $totalTasks = Task::count();
         $completedTasks = Task::where('status', 'completed')->count();
         $blockedTasks = Task::where('status', 'blocked')->count();
+        $inProgressTasks = Task::where('status', 'in_progress')->count();
+        $pendingTasks = Task::where('status', 'pending')->count();
         
         $completionPercentage = $totalTasks > 0 ? round(($completedTasks / $totalTasks) * 100) : 0;
 
@@ -27,15 +29,21 @@ class DashboardController extends Controller
             return $project;
         });
 
-        $teamWorkload = User::withCount(['tasks' => function ($query) {
-            $query->where('status', '!=', 'completed');
-        }])->get();
+        // Carga de trabalho detalhada por usuário
+        $teamWorkload = User::withCount([
+            'tasks as pending_count' => function ($query) { $query->where('status', 'pending'); },
+            'tasks as in_progress_count' => function ($query) { $query->where('status', 'in_progress'); },
+            'tasks as blocked_count' => function ($query) { $query->where('status', 'blocked'); },
+            'tasks as completed_count' => function ($query) { $query->where('status', 'completed'); }
+        ])->get();
 
         return view('dashboard', compact(
             'totalProjects', 
             'totalTasks', 
             'completedTasks', 
             'blockedTasks', 
+            'inProgressTasks',
+            'pendingTasks',
             'completionPercentage',
             'projectsProgress',
             'teamWorkload'
