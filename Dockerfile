@@ -42,8 +42,9 @@ RUN composer install --no-interaction --optimize-autoloader --no-dev
 # Copy Nginx config
 COPY docker/nginx.conf /etc/nginx/http.d/default.conf
 
-# Setup permissions
-RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache
+# Setup permissions - Reforçado para garantir escrita
+RUN chown -R www-data:www-data /var/www/storage /var/www/bootstrap/cache \
+    && chmod -R 775 /var/www/storage /var/www/bootstrap/cache
 
 # Copy entrypoint script
 COPY docker/entrypoint.sh /usr/local/bin/entrypoint.sh
