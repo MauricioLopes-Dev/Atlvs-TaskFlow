@@ -10,6 +10,7 @@ use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\KanbanController;
 use App\Http\Controllers\CalendarController;
 use App\Http\Controllers\StorageController;
+use App\Http\Controllers\UserManagementController;
 use Illuminate\Support\Facades\Route;
 
 Route::get("/", function () {
@@ -33,6 +34,9 @@ Route::middleware(["auth", "verified"])->group(function () {
     Route::get("/invitations", [InvitationController::class, "index"])->name("invitations.index");
     Route::post("/invitations", [InvitationController::class, "store"])->name("invitations.store");
     Route::delete("invitations/{invitation}", [InvitationController::class, "destroy"])->name("invitations.destroy");
+
+    Route::get('/users', [UserManagementController::class, 'index'])->name('users.index')->middleware('admin');
+    Route::delete('/users/{user}', [UserManagementController::class, 'destroy'])->name('users.destroy')->middleware('admin');
 
     // Notificações
     Route::get("/notifications", [NotificationController::class, "index"])->name("notifications.index");

@@ -27,6 +27,11 @@
                     <x-nav-link :href="route('invitations.index')" :active="request()->routeIs('invitations.*')" class="text-gray-400 hover:text-white border-atlvs-cyan transition-colors">
                         {{ __('Equipe') }}
                     </x-nav-link>
+                                        @if(Auth::user()->email === config('app.admin_email', 'admin@empresa.com'))
+                        <x-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')" class="text-gray-400 hover:text-white border-atlvs-cyan transition-colors">
+                            {{ __('Contas') }}
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -140,6 +145,11 @@
             <x-responsive-nav-link :href="route('invitations.index')" :active="request()->routeIs('invitations.*')" class="text-gray-400 hover:text-atlvs-cyan">
                 {{ __('Equipe') }}
             </x-responsive-nav-link>
+                  @if(Auth::user()->email === config('app.admin_email', 'admin@empresa.com'))
+                <x-responsive-nav-link :href="route('users.index')" :active="request()->routeIs('users.*')" class="text-gray-400 hover:text-atlvs-cyan">
+                    {{ __('Contas') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->
