@@ -22,6 +22,7 @@ Route::middleware(["auth", "verified"])->group(function () {
     Route::resource("projects", ProjectController::class);
     Route::resource("tasks", TaskController::class)->except(["index", "show"]);
     Route::patch("tasks/{task}/status", [TaskController::class, "updateStatus"])->name("tasks.updateStatus");
+    Route::patch("tasks/{task}/links", [TaskController::class, "updateLinks"])->name("tasks.updateLinks");
     Route::post("tasks/{task}/comments", [CommentController::class, "store"])->name("comments.store");
     Route::delete("comments/{comment}", [CommentController::class, "destroy"])->name("comments.destroy");
 

@@ -144,6 +144,26 @@ class TaskController extends Controller
         return back()->with('success', 'Status da tarefa atualizado!');
     }
 
+     public function updateLinks(Request $request, Task $task)
+    {
+        $validated = $request->validate([
+            'figma_link' => 'nullable|url',
+            'repo_link' => 'nullable|url',
+            'staging_link' => 'nullable|url',
+        ]);
+
+        $task->update($validated);
+
+        ActivityLog::create([
+            'task_id' => $task->id,
+            'user_id' => Auth::id(),
+            'action' => 'links_updated',
+            'description' => 'atualizou os links rápidos da tarefa',
+        ]);
+
+        return back()->with('success', 'Links da tarefa atualizados com sucesso!');
+    }
+    
     public function uploadAttachment(Request $request, Task $task)
     {
         $request->validate([
