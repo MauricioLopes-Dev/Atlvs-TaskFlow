@@ -11,10 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::table(\'tasks\', function (Blueprint $table) {
-            $table->string(\'figma_link\')->nullable();
-            $table->string(\'repo_link\')->nullable();
-            $table->string(\'staging_link\')->nullable();
+        Schema::table('tasks', function (Blueprint $table) {
+            $table->string('figma_link')->nullable();
+            $table->string('repo_link')->nullable();
+            $table->string('staging_link')->nullable();
         });
     }
 
@@ -23,8 +23,8 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table(\'tasks\', function (Blueprint $table) {
-            $table->dropColumn([\'figma_link\', \'repo_link\', \'staging_link\']);
+        Schema::table('tasks', function (Blueprint $table) {
+            $table->dropColumn(['figma_link', 'repo_link', 'staging_link']);
         });
     }
 };
