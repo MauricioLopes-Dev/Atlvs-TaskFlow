@@ -7,6 +7,12 @@ echo "--- Iniciando Build PHP Nativo ---"
 # Instalar dependências do PHP
 composer install --no-interaction --optimize-autoloader --no-dev
 
+# Run database migrations
+php artisan migrate --force
+
+# Create storage link
+php artisan storage:link
+
 # Instalar dependências do Node e compilar assets
 npm install
 npm run build
