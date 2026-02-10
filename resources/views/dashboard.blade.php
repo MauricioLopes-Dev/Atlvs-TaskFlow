@@ -9,7 +9,7 @@
                     <p class="text-gray-400 mt-1">Visão geral da saúde dos seus projetos e equipe.</p>
                 </div>
                 <div class="mt-4 md:mt-0 flex space-x-3">
-                    <a href="{{ route(\'projects.create\') }}" class="inline-flex items-center px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-bold rounded-xl transition-all duration-300 shadow-lg shadow-cyan-900/20">
+                    <a href="{{ route('projects.create') }}" class="inline-flex items-center px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-bold rounded-xl transition-all duration-300 shadow-lg shadow-cyan-900/20">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         Novo Projeto
                     </a>
@@ -110,20 +110,20 @@
     <!-- Scripts para Gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        document.addEventListener(\'DOMContentLoaded\', function() {
+        document.addEventListener('DOMContentLoaded', function() {
             // Configuração Global do Chart.js para Tema Escuro
-            Chart.defaults.color = \'#9ca3af\';
-            Chart.defaults.font.family = "\'Instrument Sans\', sans-serif";
+            Chart.defaults.color = '#9ca3af';
+            Chart.defaults.font.family = "'Instrument Sans', sans-serif";
 
             // Gráfico de Status (Doughnut)
-            const statusCtx = document.getElementById(\'statusChart\').getContext(\'2d\');
+            const statusCtx = document.getElementById('statusChart').getContext('2d');
             new Chart(statusCtx, {
-                type: \'doughnut\',
+                type: 'doughnut',
                 data: {
-                    labels: [\'Pendente\', \'Em Andamento\', \'Travado\', \'Concluído\'],
+                    labels: ['Pendente', 'Em Andamento', 'Travado', 'Concluído'],
                     datasets: [{
                         data: [{{ $pendingTasks }}, {{ $inProgressTasks }}, {{ $blockedTasks }}, {{ $completedTasks }}],
-                        backgroundColor: [\'#4b5563\', \'#0ea5e9\', \'#ef4444\', \'#22c55e\'],
+                        backgroundColor: ['#4b5563', '#0ea5e9', '#ef4444', '#22c55e'],
                         borderWidth: 0,
                         hoverOffset: 10
                     }]
@@ -132,29 +132,29 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { position: \'right\' }
+                        legend: { position: 'right' }
                     },
-                    cutout: \'70%\'
+                    cutout: '70%'
                 }
             });
 
             // Gráfico de Equipe (Bar)
-            const teamCtx = document.getElementById(\'teamChart\').getContext(\'2d\');
+            const teamCtx = document.getElementById('teamChart').getContext('2d');
             new Chart(teamCtx, {
-                type: \'bar\',
+                type: 'bar',
                 data: {
-                    labels: {!! json_encode($teamWorkload->pluck(\'name\')) !!},
+                    labels: {!! json_encode($teamWorkload->pluck('name')) !!},
                     datasets: [
                         {
-                            label: \'Em Andamento\',
-                            data: {!! json_encode($teamWorkload->pluck(\'in_progress_count\')) !!},
-                            backgroundColor: \'#0ea5e9\',
+                            label: 'Em Andamento',
+                            data: {!! json_encode($teamWorkload->pluck('in_progress_count')) !!},
+                            backgroundColor: '#0ea5e9',
                             borderRadius: 6
                         },
                         {
-                            label: \'Travado\',
-                            data: {!! json_encode($teamWorkload->pluck(\'blocked_count\')) !!},
-                            backgroundColor: \'#ef4444\',
+                            label: 'Travado',
+                            data: {!! json_encode($teamWorkload->pluck('blocked_count')) !!},
+                            backgroundColor: '#ef4444',
                             borderRadius: 6
                         }
                     ]
@@ -164,10 +164,10 @@
                     maintainAspectRatio: false,
                     scales: {
                         x: { stacked: true, grid: { display: false } },
-                        y: { stacked: true, grid: { color: \'rgba(255,255,255,0.05)\' } }
+                        y: { stacked: true, grid: { color: 'rgba(255,255,255,0.05)' } }
                     },
                     plugins: {
-                        legend: { position: \'top\' }
+                        legend: { position: 'top' }
                     }
                 }
             });
