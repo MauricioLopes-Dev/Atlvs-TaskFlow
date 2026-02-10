@@ -9,6 +9,7 @@ use App\Http\Controllers\InvitationController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\KanbanController;
 use App\Http\Controllers\CalendarController;
+use App\Http\Controllers\StorageController;
 use Illuminate\Support\Facades\Route;
 
 Route::get("/", function () {
@@ -49,5 +50,10 @@ Route::middleware(["auth", "verified"])->group(function () {
     Route::patch("/profile", [ProfileController::class, "update"])->name("profile.update");
     Route::delete("/profile", [ProfileController::class, "destroy"])->name("profile.destroy");
 });
+
+// Rota de fallback para servir imagens do storage
+Route::get('/storage/{path}', [StorageController::class, 'serve'])
+    ->where('path', '.*')
+    ->name('storage.serve');
 
 require __DIR__."/auth.php";
