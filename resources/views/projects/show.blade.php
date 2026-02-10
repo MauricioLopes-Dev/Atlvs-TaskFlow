@@ -66,7 +66,7 @@
                                             {{ $task->priority }}
                                         </span>
                                     </div>
-                                    <p class="text-gray-500 text-sm leading-relaxed font-medium max-w-3xl">{{ $task->description }}</p>
+                                    <p class="text-gray-500 text-sm leading-relaxed font-medium max-w-3xl">{{ $task->description ?: 'Sem descrição.' }}</p>
                                     
                                     <!-- Quick Links Display -->
                                     @if($task->figma_link || $task->repo_link || $task->staging_link)
@@ -114,7 +114,7 @@
                                     </div>
                                     <div>
                                         <p class="text-[9px] font-black text-gray-600 uppercase tracking-tighter">Responsável</p>
-                                        <p class="text-xs text-white font-bold">{{ $task->assignee ? $task->assignee->name : 'Livre para assumir' }}</p>
+                                        <p class="text-xs text-white font-bold">{{ $task->assignee->name ?? 'Livre para assumir' }}</p>
                                     </div>
                                 </div>
                                 <div class="flex space-x-6">
@@ -152,7 +152,7 @@
                                     @foreach($task->comments as $comment)
                                         <div class="bg-white/5 p-6 rounded-2xl border border-white/5 hover:border-white/10 transition-all">
                                             <div class="flex justify-between items-center mb-3">
-                                                <span class="text-[10px] font-black text-atlvs-cyan uppercase tracking-widest">{{ $comment->user->name }}</span>
+                                                <span class="text-[10px] font-black text-atlvs-cyan uppercase tracking-widest">{{ $comment->user ? $comment->user->name : 'Usuário Desconhecido' }}</span>
                                                 <span class="text-[9px] font-bold text-gray-600 uppercase">{{ $comment->created_at->diffForHumans() }}</span>
                                             </div>
                                             <p class="text-sm text-gray-400 leading-relaxed font-medium">{{ $comment->content }}</p>
@@ -195,7 +195,11 @@
                                                         </div>
                                                     </div>
                                                     <div class="flex space-x-3">
-                                                        <a href="{{ Storage::url($attachment->file_path) }}" target="_blank" class="text-atlvs-cyan hover:text-white transition-colors">
+                                                        @if($attachment->file_path)
+                                                            <a href="{{ route("storage.show", ["path" => $attachment->file_path]) }}" target="_blank" class="text-atlvs-cyan hover:text-white transition-colors">
+                                                        @else
+                                                            <a href="#" class="text-gray-500 cursor-not-allowed">
+                                                        @endif
                                                             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4"></path></svg>
                                                         </a>
                                                         <form action="{{ route('attachments.destroy', $attachment) }}" method="POST" class="inline">
