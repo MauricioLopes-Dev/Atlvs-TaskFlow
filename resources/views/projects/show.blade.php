@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex justify-between items-center">
             <h2 class="font-bold text-2xl text-white leading-tight tracking-tight">
-                {{ $project->name }}
+                {{ $project->name ?? 'Projeto sem nome' }}
             </h2>
             <div class="flex space-x-4">
                 <a href="{{ route('tasks.create', ['project_id' => $project->id]) }}" class="btn-cyan font-black py-2.5 px-6 rounded-full text-[10px] uppercase tracking-widest shadow-lg">
@@ -38,7 +38,7 @@
                     <div class="w-6 h-6 rounded-full bg-atlvs-cyan/20 flex items-center justify-center mr-3">
                         <svg class="w-3 h-3 text-atlvs-cyan" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"></path></svg>
                     </div>
-                    Proprietário: <span class="text-white ml-2">{{ $project->owner->name }}</span>
+                    Proprietário: <span class="text-white ml-2">{{ $project->owner->name ?? 'N/A' }}</span>
                 </div>
             </div>
 
@@ -54,7 +54,7 @@
                             <div class="flex justify-between items-start">
                                 <div class="flex-1">
                                     <div class="flex items-center mb-3">
-                                        <h4 class="text-xl font-bold text-white">{{ $task->title }}</h4>
+                                        <h4 class="text-xl font-bold text-white">{{ $task->title ?? 'Tarefa sem título' }}</h4>
                                         @php
                                             $priorityColors = [
                                                 'low' => 'bg-blue-500/10 text-blue-400 border-blue-500/20',
@@ -62,8 +62,8 @@
                                                 'high' => 'bg-red-500/10 text-red-500 border-red-500/20',
                                             ];
                                         @endphp
-                                        <span class="ml-4 px-3 py-1 text-[9px] font-black uppercase tracking-[0.15em] rounded-full border {{ $priorityColors[$task->priority] }}">
-                                            {{ $task->priority }}
+                                        <span class="ml-4 px-3 py-1 text-[9px] font-black uppercase tracking-[0.15em] rounded-full border {{ $priorityColors[$task->priority ?? 'low'] }}">
+                                            {{ $task->priority ?? 'low' }}
                                         </span>
                                     </div>
                                     <p class="text-gray-500 text-sm leading-relaxed font-medium max-w-3xl">{{ $task->description ?: 'Sem descrição.' }}</p>
@@ -98,10 +98,10 @@
                                         @csrf
                                         @method('PATCH')
                                         <select name="status" onchange="this.form.submit()" class="bg-black text-[10px] font-black text-white border-white/10 rounded-xl px-4 py-2 focus:border-atlvs-cyan focus:ring-0 transition-all uppercase tracking-widest cursor-pointer">
-                                            <option value="pending" {{ $task->status == 'pending' ? 'selected' : '' }}>PENDENTE</option>
-                                            <option value="in_progress" {{ $task->status == 'in_progress' ? 'selected' : '' }}>EM ANDAMENTO</option>
-                                            <option value="blocked" {{ $task->status == 'blocked' ? 'selected' : '' }}>TRAVADO</option>
-                                            <option value="completed" {{ $task->status == 'completed' ? 'selected' : '' }}>CONCLUÍDO</option>
+                                            <option value="pending" {{ ($task->status ?? 'pending') == 'pending' ? 'selected' : '' }}>PENDENTE</option>
+                                            <option value="in_progress" {{ ($task->status ?? 'pending') == 'in_progress' ? 'selected' : '' }}>EM ANDAMENTO</option>
+                                            <option value="blocked" {{ ($task->status ?? 'pending') == 'blocked' ? 'selected' : '' }}>TRAVADO</option>
+                                            <option value="completed" {{ ($task->status ?? 'pending') == 'completed' ? 'selected' : '' }}>CONCLUÍDO</option>
                                         </select>
                                     </form>
                                 </div>
@@ -110,7 +110,7 @@
                             <div class="mt-10 flex justify-between items-center">
                                 <div class="flex items-center bg-white/5 px-4 py-2 rounded-2xl border border-white/5">
                                     <div class="w-8 h-8 rounded-full bg-gradient-to-br from-atlvs-cyan to-white flex items-center justify-center text-black text-[10px] font-black mr-3 shadow-lg">
-                                        {{ strtoupper(substr($task->assignee ? $task->assignee->name : '?', 0, 2)) }}
+                                        {{ strtoupper(substr($task->assignee->name ?? '?', 0, 2)) }}
                                     </div>
                                     <div>
                                         <p class="text-[9px] font-black text-gray-600 uppercase tracking-tighter">Responsável</p>
@@ -152,8 +152,8 @@
                                     @foreach($task->comments ?? [] as $comment)
                                         <div class="bg-white/5 p-6 rounded-2xl border border-white/5 hover:border-white/10 transition-all">
                                             <div class="flex justify-between items-center mb-3">
-                                                <span class="text-[10px] font-black text-atlvs-cyan uppercase tracking-widest">{{ $comment->user ? $comment->user->name : 'Usuário Desconhecido' }}</span>
-                                                <span class="text-[9px] font-bold text-gray-600 uppercase">{{ $comment->created_at->diffForHumans() }}</span>
+                                                <span class="text-[10px] font-black text-atlvs-cyan uppercase tracking-widest">{{ $comment->user->name ?? 'Usuário Desconhecido' }}</span>
+                                                <span class="text-[9px] font-bold text-gray-600 uppercase">{{ $comment->created_at ? $comment->created_at->diffForHumans() : '' }}</span>
                                             </div>
                                             <p class="text-sm text-gray-400 leading-relaxed font-medium">{{ $comment->content }}</p>
                                             @if($comment->user_id === Auth::id())
@@ -190,8 +190,8 @@
                                                     <div class="flex items-center">
                                                         <svg class="w-5 h-5 text-gray-500 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.172 7l-6.586 6.586a2 2 0 102.828 2.828l6.414-6.586a4 4 0 00-5.656-5.656l-6.415 6.585a6 6 0 108.486 8.486L20.5 13"></path></svg>
                                                         <div>
-                                                            <p class="text-xs text-white font-bold truncate max-w-[150px]">{{ $attachment->file_name }}</p>
-                                                            <p class="text-[9px] text-gray-600 uppercase font-black">{{ number_format($attachment->file_size / 1024, 1) }} KB</p>
+                                                            <p class="text-xs text-white font-bold truncate max-w-[150px]">{{ $attachment->file_name ?? 'Arquivo sem nome' }}</p>
+                                                            <p class="text-[9px] text-gray-600 uppercase font-black">{{ number_format(($attachment->file_size ?? 0) / 1024, 1) }} KB</p>
                                                         </div>
                                                     </div>
                                                     <div class="flex space-x-3">
@@ -218,37 +218,36 @@
                                         
                                         <form action="{{ route('tasks.attachments.store', $task) }}" method="POST" enctype="multipart/form-data" class="mt-6">
                                             @csrf
-                                            <div class="flex items-center space-x-4">
-                                                <input type="file" name="file" class="block w-full text-[10px] text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-[10px] file:font-black file:bg-atlvs-cyan/10 file:text-atlvs-cyan hover:file:bg-atlvs-cyan/20 cursor-pointer" required>
-                                                <button type="submit" class="btn-cyan py-2 px-4 rounded-full text-[9px] font-black uppercase tracking-widest">Upload</button>
-                                            </div>
+                                            <label for="attachment-{{ $task->id }}" class="flex items-center justify-center w-full px-4 py-6 bg-black border-2 border-dashed border-white/10 rounded-2xl cursor-pointer hover:bg-white/5 transition-all">
+                                                <div class="text-center">
+                                                    <svg class="mx-auto h-8 w-8 text-gray-600" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+                                                    <p class="mt-2 text-xs text-gray-500">Arraste e solte ou <span class="font-bold text-atlvs-cyan">clique para enviar</span></p>
+                                                    <p class="mt-1 text-[9px] text-gray-700">PNG, JPG, PDF, etc. (Max 5MB)</p>
+                                                </div>
+                                                <input id="attachment-{{ $task->id }}" name="attachment" type="file" class="sr-only" onchange="this.form.submit()">
+                                            </label>
                                         </form>
                                     </div>
 
                                     <!-- Quick Links Edit -->
                                     <div>
-                                        <h5 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Links de Referência</h5>
-                                        <form action="{{ route('tasks.update', $task) }}" method="POST" class="space-y-4">
+                                        <h5 class="text-[10px] font-black text-gray-500 uppercase tracking-widest mb-4">Links Rápidos</h5>
+                                        <form action="{{ route('tasks.updateLinks', $task) }}" method="POST" class="space-y-4">
                                             @csrf
-                                            @method('PUT')
-                                            <!-- Hidden fields to maintain existing data -->
-                                            <input type="hidden" name="title" value="{{ $task->title }}">
-                                            <input type="hidden" name="priority" value="{{ $task->priority }}">
-                                            <input type="hidden" name="status" value="{{ $task->status }}">
-                                            
+                                            @method('PATCH')
                                             <div>
-                                                <label class="block text-[9px] font-black text-gray-600 uppercase tracking-widest mb-1">Figma Design</label>
-                                                <input type="url" name="figma_link" value="{{ $task->figma_link }}" placeholder="https://figma.com/..." class="w-full bg-black border-white/10 rounded-xl text-xs text-white focus:border-atlvs-cyan focus:ring-0">
+                                                <label for="figma_link" class="text-xs font-bold text-gray-400">Figma</label>
+                                                <input type="url" name="figma_link" value="{{ $task->figma_link }}" placeholder="https://figma.com/..." class="mt-1 block w-full bg-black text-sm text-white rounded-xl border-white/10 shadow-sm focus:border-atlvs-cyan focus:ring-0 transition-all placeholder-gray-700 font-medium">
                                             </div>
                                             <div>
-                                                <label class="block text-[9px] font-black text-gray-600 uppercase tracking-widest mb-1">Repositório GitHub</label>
-                                                <input type="url" name="repo_link" value="{{ $task->repo_link }}" placeholder="https://github.com/..." class="w-full bg-black border-white/10 rounded-xl text-xs text-white focus:border-atlvs-cyan focus:ring-0">
+                                                <label for="repo_link" class="text-xs font-bold text-gray-400">GitHub Repo</label>
+                                                <input type="url" name="repo_link" value="{{ $task->repo_link }}" placeholder="https://github.com/..." class="mt-1 block w-full bg-black text-sm text-white rounded-xl border-white/10 shadow-sm focus:border-atlvs-cyan focus:ring-0 transition-all placeholder-gray-700 font-medium">
                                             </div>
                                             <div>
-                                                <label class="block text-[9px] font-black text-gray-600 uppercase tracking-widest mb-1">Ambiente de Homologação</label>
-                                                <input type="url" name="staging_link" value="{{ $task->staging_link }}" placeholder="https://staging.site.com" class="w-full bg-black border-white/10 rounded-xl text-xs text-white focus:border-atlvs-cyan focus:ring-0">
+                                                <label for="staging_link" class="text-xs font-bold text-gray-400">Staging URL</label>
+                                                <input type="url" name="staging_link" value="{{ $task->staging_link }}" placeholder="https://staging.site.com" class="mt-1 block w-full bg-black text-sm text-white rounded-xl border-white/10 shadow-sm focus:border-atlvs-cyan focus:ring-0 transition-all placeholder-gray-700 font-medium">
                                             </div>
-                                            <button type="submit" class="w-full bg-white/5 border border-white/10 text-white py-2 rounded-xl text-[9px] font-black uppercase tracking-widest hover:bg-white/10 transition-all">Salvar Links</button>
+                                            <button type="submit" class="w-full btn-cyan font-black text-[9px] uppercase tracking-widest py-3 rounded-xl shadow-xl mt-2">Salvar Links</button>
                                         </form>
                                     </div>
                                 </div>
@@ -256,13 +255,13 @@
 
                             <!-- History Tab -->
                             <div x-show="activeTab === 'history'" class="space-y-4">
-                                @forelse($task->activityLogs as $log)
-                                    <div class="flex items-start space-x-4 text-xs">
+                                @forelse($task->activityLogs ?? [] as $log)
+                                    <div class="flex space-x-4 items-start text-xs text-gray-400">
                                         <div class="w-1.5 h-1.5 rounded-full bg-atlvs-cyan mt-1.5 shadow-[0_0_5px_rgba(6,182,212,0.5)]"></div>
                                         <div class="flex-1">
-                                            <span class="text-white font-bold">{{ $log->user->name }}</span>
+                                            <span class="text-white font-bold">{{ $log->user->name ?? 'Sistema' }}</span>
                                             <span class="text-gray-500">{{ $log->description }}</span>
-                                            <span class="text-[10px] text-gray-700 ml-2 uppercase font-black">{{ $log->created_at->diffForHumans() }}</span>
+                                            <span class="text-[9px] font-bold text-gray-600 uppercase">{{ $log->created_at ? $log->created_at->diffForHumans() : '' }}</span>
                                         </div>
                                     </div>
                                 @empty
@@ -272,9 +271,12 @@
                         </div>
                     </div>
                 @empty
-                    <div class="glass-card rounded-3xl p-20 text-center border-2 border-dashed border-white/5">
-                        <p class="text-gray-600 font-black uppercase tracking-widest text-xs">Nenhuma tarefa ativa para este site.</p>
-                        <a href="{{ route('tasks.create', ['project_id' => $project->id]) }}" class="text-atlvs-cyan text-[10px] font-black uppercase tracking-widest mt-4 inline-block hover:text-white transition-colors">Adicionar primeira tarefa</a>
+                    <div class="text-center py-16 glass-card rounded-3xl">
+                        <svg class="mx-auto h-12 w-12 text-gray-600" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
+                            <path vector-effect="non-scaling-stroke" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 13h6m-3-3v6m-9 1V7a2 2 0 012-2h6l2 2h6a2 2 0 012 2v8a2 2 0 01-2 2H5a2 2 0 01-2-2z" />
+                        </svg>
+                        <h3 class="mt-4 text-lg font-bold text-white">Sem tarefas por aqui</h3>
+                        <p class="mt-1 text-sm text-gray-500">Comece adicionando uma nova tarefa a este projeto.</p>
                     </div>
                 @endforelse
             </div>
