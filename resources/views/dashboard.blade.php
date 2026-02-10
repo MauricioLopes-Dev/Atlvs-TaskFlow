@@ -9,7 +9,7 @@
                     <p class="text-gray-400 mt-1">Visão geral da saúde dos seus projetos e equipe.</p>
                 </div>
                 <div class="mt-4 md:mt-0 flex space-x-3">
-                    <a href="{{ route('projects.create') }}" class="inline-flex items-center px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-bold rounded-xl transition-all duration-300 shadow-lg shadow-cyan-900/20">
+                    <a href="{{ route(\'projects.create\') }}" class="inline-flex items-center px-4 py-2 bg-cyan-600 hover:bg-cyan-500 text-white text-sm font-bold rounded-xl transition-all duration-300 shadow-lg shadow-cyan-900/20">
                         <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path></svg>
                         Novo Projeto
                     </a>
@@ -63,6 +63,63 @@
                 </div>
             </div>
 
+            <!-- Alertas de Prazos -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                <!-- Tarefas Atrasadas -->
+                <div class="glass-card p-6 rounded-2xl border border-red-500/30 bg-red-500/5 animate-fade-in">
+                    <h3 class="text-sm font-bold text-red-400 mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path></svg>
+                        Atrasadas ({{ $overdueTasks->count() }})
+                    </h3>
+                    <div class="space-y-2">
+                        @forelse($overdueTasks as $task)
+                            <a href="{{ route(\'projects.show\', $task->project_id) }}" class="block bg-red-500/10 border border-red-500/20 rounded-xl p-3 hover:bg-red-500/20 transition-all">
+                                <p class="text-xs font-bold text-white truncate">{{ $task->title }}</p>
+                                <p class="text-[9px] text-red-400 mt-1">Vencimento: {{ $task->due_date->format(\'d/m/Y\') }}</p>
+                            </a>
+                        @empty
+                            <p class="text-xs text-gray-600 italic">Nenhuma tarefa atrasada.</p>
+                        @endforelse
+                    </div>
+                </div>
+
+                <!-- Tarefas Vencendo Hoje -->
+                <div class="glass-card p-6 rounded-2xl border border-atlvs-cyan/30 bg-atlvs-cyan/5 animate-fade-in" style="animation-delay: 100ms">
+                    <h3 class="text-sm font-bold text-atlvs-cyan mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        Vencem Hoje ({{ $todayTasks->count() }})
+                    </h3>
+                    <div class="space-y-2">
+                        @forelse($todayTasks as $task)
+                            <a href="{{ route(\'projects.show\', $task->project_id) }}" class="block bg-atlvs-cyan/10 border border-atlvs-cyan/20 rounded-xl p-3 hover:bg-atlvs-cyan/20 transition-all">
+                                <p class="text-xs font-bold text-white truncate">{{ $task->title }}</p>
+                                <p class="text-[9px] text-atlvs-cyan mt-1">Vencimento: {{ $task->due_date->format(\'d/m/Y\') }}</p>
+                            </a>
+                        @empty
+                            <p class="text-xs text-gray-600 italic">Nenhuma tarefa vencendo hoje.</p>
+                        @endforelse
+                    </div>
+                </div>
+
+                <!-- Tarefas Próximas (3 dias) -->
+                <div class="glass-card p-6 rounded-2xl border border-yellow-500/30 bg-yellow-500/5 animate-fade-in" style="animation-delay: 200ms">
+                    <h3 class="text-sm font-bold text-yellow-400 mb-4 flex items-center">
+                        <svg class="w-5 h-5 mr-2" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
+                        Próximas ({{ $upcomingTasks->count() }})
+                    </h3>
+                    <div class="space-y-2">
+                        @forelse($upcomingTasks as $task)
+                            <a href="{{ route(\'projects.show\', $task->project_id) }}" class="block bg-yellow-500/10 border border-yellow-500/20 rounded-xl p-3 hover:bg-yellow-500/20 transition-all">
+                                <p class="text-xs font-bold text-white truncate">{{ $task->title }}</p>
+                                <p class="text-[9px] text-yellow-400 mt-1">Vencimento: {{ $task->due_date->format(\'d/m/Y\') }}</p>
+                            </a>
+                        @empty
+                            <p class="text-xs text-gray-600 italic">Nenhuma tarefa próxima.</p>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+
             <!-- Seção de Gráficos -->
             <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
                 <!-- Gráfico de Status Geral -->
@@ -110,20 +167,20 @@
     <!-- Scripts para Gráficos -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener(\'DOMContentLoaded\', function() {
             // Configuração Global do Chart.js para Tema Escuro
-            Chart.defaults.color = '#9ca3af';
-            Chart.defaults.font.family = "'Instrument Sans', sans-serif";
+            Chart.defaults.color = \'#9ca3af\';
+            Chart.defaults.font.family = "\'Instrument Sans\', sans-serif";
 
             // Gráfico de Status (Doughnut)
-            const statusCtx = document.getElementById('statusChart').getContext('2d');
+            const statusCtx = document.getElementById(\'statusChart\').getContext(\'2d\');
             new Chart(statusCtx, {
-                type: 'doughnut',
+                type: \'doughnut\',
                 data: {
-                    labels: ['Pendente', 'Em Andamento', 'Travado', 'Concluído'],
+                    labels: [\'Pendente\', \'Em Andamento\', \'Travado\', \'Concluído\'],
                     datasets: [{
                         data: [{{ $pendingTasks }}, {{ $inProgressTasks }}, {{ $blockedTasks }}, {{ $completedTasks }}],
-                        backgroundColor: ['#4b5563', '#0ea5e9', '#ef4444', '#22c55e'],
+                        backgroundColor: [\'#4b5563\', \'#0ea5e9\', \'#ef4444\', \'#22c55e\'],
                         borderWidth: 0,
                         hoverOffset: 10
                     }]
@@ -132,29 +189,29 @@
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { position: 'right' }
+                        legend: { position: \'right\' }
                     },
-                    cutout: '70%'
+                    cutout: \'70%\'
                 }
             });
 
             // Gráfico de Equipe (Bar)
-            const teamCtx = document.getElementById('teamChart').getContext('2d');
+            const teamCtx = document.getElementById(\'teamChart\').getContext(\'2d\');
             new Chart(teamCtx, {
-                type: 'bar',
+                type: \'bar\',
                 data: {
-                    labels: {!! json_encode($teamWorkload->pluck('name')) !!},
+                    labels: {!! json_encode($teamWorkload->pluck(\'name\')) !!},
                     datasets: [
                         {
-                            label: 'Em Andamento',
-                            data: {!! json_encode($teamWorkload->pluck('in_progress_count')) !!},
-                            backgroundColor: '#0ea5e9',
+                            label: \'Em Andamento\',
+                            data: {!! json_encode($teamWorkload->pluck(\'in_progress_count\')) !!},
+                            backgroundColor: \'#0ea5e9\',
                             borderRadius: 6
                         },
                         {
-                            label: 'Travado',
-                            data: {!! json_encode($teamWorkload->pluck('blocked_count')) !!},
-                            backgroundColor: '#ef4444',
+                            label: \'Travado\',
+                            data: {!! json_encode($teamWorkload->pluck(\'blocked_count\')) !!},
+                            backgroundColor: \'#ef4444\',
                             borderRadius: 6
                         }
                     ]
@@ -164,10 +221,10 @@
                     maintainAspectRatio: false,
                     scales: {
                         x: { stacked: true, grid: { display: false } },
-                        y: { stacked: true, grid: { color: 'rgba(255,255,255,0.05)' } }
+                        y: { stacked: true, grid: { color: \'rgba(255,255,255,0.05)\' } }
                     },
                     plugins: {
-                        legend: { position: 'top' }
+                        legend: { position: \'top\' }
                     }
                 }
             });

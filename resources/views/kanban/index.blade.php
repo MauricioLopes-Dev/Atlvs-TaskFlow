@@ -66,8 +66,23 @@
                                 </div>
 
                                 @if($task->due_date)
-                                    <div class="mt-2 text-[8px] text-gray-600 font-black uppercase tracking-tighter">
-                                        📅 {{ $task->due_date->format('d/m') }}
+                                    @php
+                                        $daysUntil = $task->due_date->diffInDays(now());
+                                        $isOverdue = $task->due_date->isPast() && $task->status != 'completed';
+                                        $isToday = $task->due_date->isToday();
+                                        $isUrgent = $daysUntil <= 3 && $daysUntil >= 0;
+                                    @endphp
+                                    <div class="mt-3 pt-3 border-t border-white/10 flex items-center justify-between">
+                                        <div class="text-[8px] text-gray-600 font-black uppercase tracking-tighter">
+                                            📅 {{ $task->due_date->format('d/m') }}
+                                        </div>
+                                        @if($isOverdue)
+                                            <span class="px-2 py-1 bg-red-500/20 border border-red-500/30 text-red-400 text-[7px] font-black uppercase rounded tracking-tighter">Atrasado</span>
+                                        @elseif($isToday)
+                                            <span class="px-2 py-1 bg-atlvs-cyan/20 border border-atlvs-cyan/30 text-atlvs-cyan text-[7px] font-black uppercase rounded tracking-tighter animate-pulse">Hoje</span>
+                                        @elseif($isUrgent)
+                                            <span class="px-2 py-1 bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 text-[7px] font-black uppercase rounded tracking-tighter">Urgente</span>
+                                        @endif
                                     </div>
                                 @endif
                             </div>
@@ -120,8 +135,23 @@
                                 </div>
 
                                 @if($task->due_date)
-                                    <div class="mt-2 text-[8px] text-gray-600 font-black uppercase tracking-tighter">
-                                        📅 {{ $task->due_date->format('d/m') }}
+                                    @php
+                                        $daysUntil = $task->due_date->diffInDays(now());
+                                        $isOverdue = $task->due_date->isPast() && $task->status != 'completed';
+                                        $isToday = $task->due_date->isToday();
+                                        $isUrgent = $daysUntil <= 3 && $daysUntil >= 0;
+                                    @endphp
+                                    <div class="mt-3 pt-3 border-t border-white/10 flex items-center justify-between">
+                                        <div class="text-[8px] text-gray-600 font-black uppercase tracking-tighter">
+                                            📅 {{ $task->due_date->format('d/m') }}
+                                        </div>
+                                        @if($isOverdue)
+                                            <span class="px-2 py-1 bg-red-500/20 border border-red-500/30 text-red-400 text-[7px] font-black uppercase rounded tracking-tighter">Atrasado</span>
+                                        @elseif($isToday)
+                                            <span class="px-2 py-1 bg-atlvs-cyan/20 border border-atlvs-cyan/30 text-atlvs-cyan text-[7px] font-black uppercase rounded tracking-tighter animate-pulse">Hoje</span>
+                                        @elseif($isUrgent)
+                                            <span class="px-2 py-1 bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 text-[7px] font-black uppercase rounded tracking-tighter">Urgente</span>
+                                        @endif
                                     </div>
                                 @endif
                             </div>
@@ -174,8 +204,23 @@
                                 </div>
 
                                 @if($task->due_date)
-                                    <div class="mt-2 text-[8px] text-gray-600 font-black uppercase tracking-tighter">
-                                        📅 {{ $task->due_date->format('d/m') }}
+                                    @php
+                                        $daysUntil = $task->due_date->diffInDays(now());
+                                        $isOverdue = $task->due_date->isPast() && $task->status != 'completed';
+                                        $isToday = $task->due_date->isToday();
+                                        $isUrgent = $daysUntil <= 3 && $daysUntil >= 0;
+                                    @endphp
+                                    <div class="mt-3 pt-3 border-t border-white/10 flex items-center justify-between">
+                                        <div class="text-[8px] text-gray-600 font-black uppercase tracking-tighter">
+                                            📅 {{ $task->due_date->format('d/m') }}
+                                        </div>
+                                        @if($isOverdue)
+                                            <span class="px-2 py-1 bg-red-500/20 border border-red-500/30 text-red-400 text-[7px] font-black uppercase rounded tracking-tighter">Atrasado</span>
+                                        @elseif($isToday)
+                                            <span class="px-2 py-1 bg-atlvs-cyan/20 border border-atlvs-cyan/30 text-atlvs-cyan text-[7px] font-black uppercase rounded tracking-tighter animate-pulse">Hoje</span>
+                                        @elseif($isUrgent)
+                                            <span class="px-2 py-1 bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 text-[7px] font-black uppercase rounded tracking-tighter">Urgente</span>
+                                        @endif
                                     </div>
                                 @endif
                             </div>
@@ -228,8 +273,23 @@
                                 </div>
 
                                 @if($task->due_date)
-                                    <div class="mt-2 text-[8px] text-gray-600 font-black uppercase tracking-tighter">
-                                        📅 {{ $task->due_date->format('d/m') }}
+                                    @php
+                                        $daysUntil = $task->due_date->diffInDays(now());
+                                        $isOverdue = $task->due_date->isPast() && $task->status != 'completed';
+                                        $isToday = $task->due_date->isToday();
+                                        $isUrgent = $daysUntil <= 3 && $daysUntil >= 0;
+                                    @endphp
+                                    <div class="mt-3 pt-3 border-t border-white/10 flex items-center justify-between">
+                                        <div class="text-[8px] text-gray-600 font-black uppercase tracking-tighter">
+                                            📅 {{ $task->due_date->format('d/m') }}
+                                        </div>
+                                        @if($isOverdue)
+                                            <span class="px-2 py-1 bg-red-500/20 border border-red-500/30 text-red-400 text-[7px] font-black uppercase rounded tracking-tighter">Atrasado</span>
+                                        @elseif($isToday)
+                                            <span class="px-2 py-1 bg-atlvs-cyan/20 border border-atlvs-cyan/30 text-atlvs-cyan text-[7px] font-black uppercase rounded tracking-tighter animate-pulse">Hoje</span>
+                                        @elseif($isUrgent)
+                                            <span class="px-2 py-1 bg-yellow-500/20 border border-yellow-500/30 text-yellow-400 text-[7px] font-black uppercase rounded tracking-tighter">Urgente</span>
+                                        @endif
                                     </div>
                                 @endif
                             </div>

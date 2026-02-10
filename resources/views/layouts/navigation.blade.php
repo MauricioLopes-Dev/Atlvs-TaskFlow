@@ -21,6 +21,9 @@
                     <x-nav-link :href="route('kanban.index')" :active="request()->routeIs('kanban.*')" class="text-gray-400 hover:text-white border-atlvs-cyan transition-colors">
                         {{ __('Kanban') }}
                     </x-nav-link>
+                    <x-nav-link :href="route('calendar.index')" :active="request()->routeIs('calendar.*')" class="text-gray-400 hover:text-white border-atlvs-cyan transition-colors">
+                        {{ __('Calendário') }}
+                    </x-nav-link>
                     <x-nav-link :href="route('invitations.index')" :active="request()->routeIs('invitations.*')" class="text-gray-400 hover:text-white border-atlvs-cyan transition-colors">
                         {{ __('Equipe') }}
                     </x-nav-link>
@@ -130,6 +133,9 @@
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('kanban.index')" :active="request()->routeIs('kanban.*')" class="text-gray-400 hover:text-atlvs-cyan">
                 {{ __('Kanban') }}
+            </x-responsive-nav-link>
+            <x-responsive-nav-link :href="route('calendar.index')" :active="request()->routeIs('calendar.*')" class="text-gray-400 hover:text-atlvs-cyan">
+                {{ __('Calendário') }}
             </x-responsive-nav-link>
             <x-responsive-nav-link :href="route('invitations.index')" :active="request()->routeIs('invitations.*')" class="text-gray-400 hover:text-atlvs-cyan">
                 {{ __('Equipe') }}
