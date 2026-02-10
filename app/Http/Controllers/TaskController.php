@@ -197,15 +197,7 @@ class TaskController extends Controller
     {
         $user = User::find($userId);
         if ($user) {
-            $user->notifications()->create([
-                'id' => \Illuminate\Support\Str::uuid(),
-                'type' => 'App\Notifications\InternalNotification',
-                'data' => [
-                    'message' => $message,
-                    'link' => $link,
-                    'user_name' => Auth::user()->name
-                ],
-            ]);
+            $user->notify(new \App\Notifications\InternalNotification($message, $link, Auth::user()->name));
         }
     }
 
