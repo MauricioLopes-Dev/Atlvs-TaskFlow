@@ -1,15 +1,16 @@
 <x-app-layout>
     <x-slot name="header">
         <h2 class="font-bold text-2xl text-white leading-tight tracking-tight">
-            {{ __('Criar Novo Projeto') }}
+            {{ __('Editar Projeto') }}
         </h2>
     </x-slot>
 
     <div class="py-12">
         <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
             <div class="glass-card rounded-3xl p-10 border border-white/10">
-                <form action="{{ route('projects.store') }}" method="POST" enctype="multipart/form-data" class="space-y-8">
+                <form action="{{ route('projects.update', $project) }}" method="POST" enctype="multipart/form-data" class="space-y-8">
                     @csrf
+                    @method('PATCH')
 
                     <!-- Nome do Projeto -->
                     <div>
@@ -19,7 +20,7 @@
                             name="name" 
                             id="name" 
                             class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-600 focus:border-atlvs-cyan focus:ring-2 focus:ring-atlvs-cyan/20 focus:outline-none transition-all"
-                            placeholder="Ex: Site da Empresa XYZ"
+                            value="{{ old('name', $project->name) }}"
                             required
                         />
                         @error('name')
@@ -35,8 +36,7 @@
                             id="description" 
                             rows="5" 
                             class="w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-gray-600 focus:border-atlvs-cyan focus:ring-2 focus:ring-atlvs-cyan/20 focus:outline-none transition-all resize-none"
-                            placeholder="Descreva o objetivo, escopo e detalhes importantes do projeto..."
-                        ></textarea>
+                        >{{ old('description', $project->description) }}</textarea>
                         @error('description')
                             <p class="mt-2 text-sm text-red-400">{{ $message }}</p>
                         @enderror
@@ -45,6 +45,15 @@
                     <!-- Upload de Banner/Logo -->
                     <div>
                         <label for="image" class="block text-sm font-bold text-gray-300 mb-3 uppercase tracking-widest">{{ __('Banner ou Logo do Projeto (Opcional)') }}</label>
+                        
+                        <!-- Imagem Atual -->
+                        @if($project->image_path)
+                            <div class="mb-4">
+                                <p class="text-sm text-gray-400 mb-2">Imagem atual:</p>
+                                <img src="{{ asset('storage/' . $project->image_path) }}" alt="Banner atual" class="w-full h-48 object-cover rounded-xl border border-atlvs-cyan/30">
+                            </div>
+                        @endif
+
                         <div class="relative">
                             <input 
                                 type="file" 
@@ -65,7 +74,7 @@
                             <!-- Preview da Imagem -->
                             <div id="imagePreview" class="mt-4 hidden">
                                 <img id="previewImg" src="" alt="Preview" class="w-full h-48 object-cover rounded-xl border border-atlvs-cyan/30">
-                                <button type="button" onclick="clearImage()" class="mt-2 text-sm text-red-400 hover:text-red-300 font-bold">✕ Remover imagem</button>
+                                <button type="button" onclick="clearImage()" class="mt-2 text-sm text-red-400 hover:text-red-300 font-bold">✕ Remover nova imagem</button>
                             </div>
                         </div>
                         @error('image')
@@ -75,14 +84,14 @@
 
                     <!-- Botões de Ação -->
                     <div class="flex items-center justify-between pt-6 border-t border-white/10">
-                        <a href="{{ route('projects.index') }}" class="px-6 py-3 bg-white/5 hover:bg-white/10 text-gray-300 font-bold border border-white/10 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm">
+                        <a href="{{ route('projects.show', $project) }}" class="px-6 py-3 bg-white/5 hover:bg-white/10 text-gray-300 font-bold border border-white/10 rounded-xl transition-all duration-300 uppercase tracking-widest text-sm">
                             {{ __('Cancelar') }}
                         </a>
                         <button 
                             type="submit" 
                             class="px-8 py-3 bg-atlvs-cyan hover:bg-atlvs-cyan/80 text-black font-bold rounded-xl transition-all duration-300 shadow-lg shadow-atlvs-cyan/20 uppercase tracking-widest text-sm"
                         >
-                            {{ __('Criar Projeto') }}
+                            {{ __('Salvar Alterações') }}
                         </button>
                     </div>
                 </form>

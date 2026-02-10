@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Project;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
@@ -24,9 +25,16 @@ class ProjectController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB max
         ]);
 
         $validated['owner_id'] = Auth::id();
+
+        // Processar upload de imagem
+        if ($request->hasFile('image')) {
+            $imagePath = $request->file('image')->store('projects', 'public');
+            $validated['image_path'] = $imagePath;
+        }
 
         $project = Project::create($validated);
         $project->users()->attach(Auth::id()); // Adiciona o criador como membro do projeto
@@ -59,7 +67,19 @@ class ProjectController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'description' => 'nullable|string',
+            'image' => 'nullable|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB max
         ]);
+
+        // Processar upload de imagem
+        if ($request->hasFile('image')) {
+            // Deletar imagem antiga se existir
+            if ($project->image_path) {
+                Storage::disk('public')->delete($project->image_path);
+            }
+            
+            $imagePath = $request->file('image')->store('projects', 'public');
+            $validated['image_path'] = $imagePath;
+        }
 
         $project->update($validated);
 
@@ -71,6 +91,12 @@ class ProjectController extends Controller
         if (!Auth::user()->projects->contains($project)) {
             abort(403, 'Acesso não autorizado a este projeto.');
         }
+        
+        // Deletar imagem se existir
+        if ($project->image_path) {
+            Storage::disk('public')->delete($project->image_path);
+        }
+        
         $project->delete();
         return redirect()->route('projects.index')->with('success', 'Projeto excluído com sucesso!');
     }

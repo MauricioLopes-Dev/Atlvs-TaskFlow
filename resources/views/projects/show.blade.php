@@ -24,6 +24,13 @@
                 </div>
             @endif
 
+            <!-- Banner do Projeto -->
+            @if($project->image_path)
+                <div class="mb-8 rounded-3xl overflow-hidden border border-white/10">
+                    <img src="{{ asset('storage/' . $project->image_path) }}" alt="{{ $project->name }}" class="w-full h-64 object-cover">
+                </div>
+            @endif
+
             <div class="glass-card rounded-3xl p-10 mb-12">
                 <h3 class="text-[10px] font-black text-gray-500 uppercase tracking-[0.2em] mb-4">Descrição Estratégica</h3>
                 <p class="text-gray-300 leading-relaxed text-lg font-medium">{{ $project->description ?: 'Sem descrição detalhada.' }}</p>
