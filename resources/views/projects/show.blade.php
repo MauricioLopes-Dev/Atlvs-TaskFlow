@@ -8,16 +8,18 @@
                 <a href="{{ route('tasks.create', ['project_id' => $project->id]) }}" class="btn-cyan font-black py-2.5 px-6 rounded-full text-[10px] uppercase tracking-widest shadow-lg">
                     + Nova Tarefa
                 </a>
-                <a href="{{ route('projects.edit', $project) }}" class="bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 font-black py-2.5 px-6 rounded-full text-[10px] uppercase tracking-widest transition-all">
-                    Editar Projeto
-                </a>
+                    @if($project->owner_id === Auth::id())
+                    <a href="{{ route('projects.edit', $project) }}" class="bg-white/5 border border-white/10 text-gray-400 hover:text-white hover:bg-white/10 font-black py-2.5 px-6 rounded-full text-[10px] uppercase tracking-widest transition-all">
+                        Editar Projeto
+                    </a>
                     <form action="{{ route('projects.destroy', $project) }}" method="POST" onsubmit="return confirm('Tem certeza que deseja excluir este projeto? Esta ação não pode ser desfeita.')">
                     @csrf
-                    @method('DELETE')
-                    <button type="submit" class="bg-red-500/10 border border-red-500/20 text-red-400 hover:text-red-300 hover:bg-red-500/20 font-black py-2.5 px-6 rounded-full text-[10px] uppercase tracking-widest transition-all">
-                        Excluir Projeto
-                    </button>
-                </form>
+                        @method('DELETE')
+                        <button type="submit" class="bg-red-500/10 border border-red-500/20 text-red-400 hover:text-red-300 hover:bg-red-500/20 font-black py-2.5 px-6 rounded-full text-[10px] uppercase tracking-widest transition-all">
+                            Excluir Projeto
+                        </button>
+                    </form>
+                @endif
             </div>
         </div>
     </x-slot>

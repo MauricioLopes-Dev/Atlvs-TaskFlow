@@ -11,7 +11,7 @@ class ProjectController extends Controller
 {
     public function index()
     {
-        $projects = Auth::user()->projects()->withCount('tasks')->get();
+        $projects = Project::withCount('tasks')->latest()->get();
         return view('projects.index', compact('projects'));
     }
 
@@ -45,9 +45,6 @@ class ProjectController extends Controller
     public function show(Project $project)
     {
         try {
-            if (!Auth::user()->projects->contains($project)) {
-                abort(403, 'Acesso não autorizado a este projeto.');
-            }
             // Carregar relacionamentos com segurança
             $project->load([
                 'tasks' => function ($query) {
@@ -64,7 +61,7 @@ class ProjectController extends Controller
 
     public function edit(Project $project)
     {
-        if (!Auth::user()->projects->contains($project)) {
+         if ($project->owner_id !== Auth::id()) {
             abort(403, 'Acesso não autorizado a este projeto.');
         }
         return view('projects.edit', compact('project'));
@@ -72,7 +69,7 @@ class ProjectController extends Controller
 
     public function update(Request $request, Project $project)
     {
-        if (!Auth::user()->projects->contains($project)) {
+         if ($project->owner_id !== Auth::id()) {
             abort(403, 'Acesso não autorizado a este projeto.');
         }
         $validated = $request->validate([
@@ -99,7 +96,7 @@ class ProjectController extends Controller
 
     public function destroy(Project $project)
     {
-        if (!Auth::user()->projects->contains($project)) {
+        if ($project->owner_id !== Auth::id()) {
             abort(403, 'Acesso não autorizado a este projeto.');
         }
         
