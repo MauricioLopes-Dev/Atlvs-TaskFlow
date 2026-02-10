@@ -56,6 +56,26 @@ Para rodar o projeto localmente, siga os passos abaixo:
    ```
    Acesse em: `http://localhost:8000`
 
+   ## ☁️ Persistência de capas de projetos em produção
+
+Para evitar perder capas de projetos a cada deploy (especialmente no Render Free), configure um bucket S3 compatível e ajuste o disco de upload:
+
+```env
+PROJECT_IMAGES_DISK=s3
+FILESYSTEM_DISK=local
+AWS_ACCESS_KEY_ID=...
+AWS_SECRET_ACCESS_KEY=...
+AWS_DEFAULT_REGION=...
+AWS_BUCKET=...
+AWS_URL=...
+AWS_ENDPOINT=...
+AWS_USE_PATH_STYLE_ENDPOINT=false
+```
+
+- `PROJECT_IMAGES_DISK` controla onde as capas de projeto serão salvas.
+- Em desenvolvimento local, mantenha `PROJECT_IMAGES_DISK=public`.
+- Em produção, use `s3` (ou outro disco persistente) para manter as imagens após novos deploys.
+
 ## 🤝 Contribuição
 
 Este projeto foi desenvolvido para uso interno da empresa. Sinta-se à vontade para expandir as funcionalidades conforme a necessidade da sua equipe de 4 pessoas.

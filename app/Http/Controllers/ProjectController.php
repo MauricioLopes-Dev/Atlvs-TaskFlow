@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Storage;
 
 class ProjectController extends Controller
 {
+       private function projectImagesDisk(): string
+    {
+        return config('taskflow.project_images_disk', 'public');
+    }
+
     public function index()
     {
         $projects = Project::withCount('tasks')->latest()->get();
@@ -32,8 +37,10 @@ class ProjectController extends Controller
 
         // Processar upload de imagem
         if ($request->hasFile('image')) {
-            $imagePath = $request->file('image')->store('projects', 'public');
+           $imageDisk = $this->projectImagesDisk();
+            $imagePath = $request->file('image')->store('projects', $imageDisk);
             $validated['image_path'] = $imagePath;
+            $validated['image_disk'] = $imageDisk;
         }
 
         $project = Project::create($validated);
@@ -82,11 +89,13 @@ class ProjectController extends Controller
         if ($request->hasFile('image')) {
             // Deletar imagem antiga se existir
             if ($project->image_path) {
-                Storage::disk('public')->delete($project->image_path);
+                 Storage::disk($project->resolved_image_disk)->delete($project->image_path);
             }
             
-            $imagePath = $request->file('image')->store('projects', 'public');
+            $imageDisk = $this->projectImagesDisk();
+            $imagePath = $request->file('image')->store('projects', $imageDisk);
             $validated['image_path'] = $imagePath;
+            $validated['image_disk'] = $imageDisk;
         }
 
         $project->update($validated);
@@ -102,7 +111,7 @@ class ProjectController extends Controller
         
         // Deletar imagem se existir
         if ($project->image_path) {
-            Storage::disk('public')->delete($project->image_path);
+             Storage::disk($project->resolved_image_disk)->delete($project->image_path);
         }
         
         $project->delete();

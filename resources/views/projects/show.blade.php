@@ -36,7 +36,7 @@
             <!-- Banner do Projeto -->
             @if($project->image_path)
                 <div class="mb-8 rounded-3xl overflow-hidden border border-white/10">
-                    <img src="{{ asset('storage/' . $project->image_path) }}" alt="{{ $project->name }}" class="w-full h-64 object-cover">
+                    <img src="{{ $project->image_url }}" alt="{{ $project->name }}" class="w-full h-64 object-cover">
                 </div>
             @endif
 

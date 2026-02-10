@@ -25,7 +25,7 @@
                         <!-- Banner do Projeto -->
                         @if($project->image_path)
                             <div class="relative h-40 overflow-hidden bg-gradient-to-br from-atlvs-cyan/20 to-blue-500/20">
-                                <img src="{{ asset('storage/' . $project->image_path) }}" alt="{{ $project->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
+                                <img src="{{ $project->image_url }}" alt="{{ $project->name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500">
                                 <div class="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
                             </div>
                         @else
