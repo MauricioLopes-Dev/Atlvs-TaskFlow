@@ -12,7 +12,7 @@ class KanbanController extends Controller
 {
     public function index()
     {
-        $projects = Auth::user()->projects; // Ou todos os projetos que o usuário tem acesso
+        $projects = Project::query()->latest()->get();
         $tasksByStatus = [];
 
         foreach (["pending", "in_progress", "blocked", "completed"] as $status) {

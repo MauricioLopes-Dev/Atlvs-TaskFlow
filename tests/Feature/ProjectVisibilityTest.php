@@ -29,6 +29,31 @@ class ProjectVisibilityTest extends TestCase
         $response->assertSee('Projeto Compartilhado');
     }
 
+      public function test_authenticated_user_can_see_team_tasks_in_kanban(): void
+    {
+        $owner = User::factory()->create(['email_verified_at' => now()]);
+        $viewer = User::factory()->create(['email_verified_at' => now()]);
+
+        $project = Project::create([
+            'name' => 'Projeto Kanban Compartilhado',
+            'description' => 'Projeto visível no Kanban para a equipe',
+            'owner_id' => $owner->id,
+        ]);
+
+        Task::create([
+            'title' => 'Tarefa compartilhada no Kanban',
+            'description' => 'Descrição',
+            'priority' => 'high',
+            'status' => 'pending',
+            'project_id' => $project->id,
+        ]);
+
+        $response = $this->actingAs($viewer)->get(route('kanban.index'));
+
+        $response->assertOk();
+        $response->assertSee('Tarefa compartilhada no Kanban');
+    }
+
     public function test_non_owner_cannot_edit_or_delete_project(): void
     {
         $owner = User::factory()->create(['email_verified_at' => now()]);
